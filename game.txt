@@ -1,0 +1,19 @@
+
+# character creation
+
+# save and read character from file
+    will need to save all information necessary to recreate character using character creator. will need to alter character creator to accept exp and other things that may change during the game.
+
+# move character
+    # simple 'Where would you like to go?'
+        # Store, Battle arena, Archives(for save game)
+
+# buy and sell
+    weapons, armor, recovery items
+
+# designated battle area
+    # gain experience and level up
+        #point based level up. increase attack and accuracy and hp
+
+
+
