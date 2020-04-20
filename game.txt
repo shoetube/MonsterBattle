@@ -1,19 +1,22 @@
 
 # character creation
 
-# save and read character from file
-    will need to save all information necessary to recreate character using character creator. will need to alter character creator to accept exp and other things that may change during the game.
+# Archives
+    # will need to save all information necessary to recreate character using character creator. will need to alter character creator to accept exp and other things that may change during the game.
 
-# move character
-    # simple 'Where would you like to go?'
-        # Store, Battle arena, Archives(for save game)
+# Navigation
+    I think I've developed this enough for now.
 
-# buy and sell
+# Store
     weapons, armor, recovery items
+    focus on recovery items first to build in a bit of strategy
 
-# designated battle area
+# Arena
     # gain experience and level up
         #point based level up. increase attack and accuracy and hp
+    Monsters don't need to be nearly as complex as the player.
+    Why not make a simply slime enemy?
+    I can create several simple enemies of varying difficulty easily.
 
 
 

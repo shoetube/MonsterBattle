@@ -1,4 +1,6 @@
 #!/usr/bin/python3 
+import sys
+import pickle
 class Creature:
     def __init__(self, weapon, race, job):
         self.weapon = weapon
@@ -29,27 +31,29 @@ class weapon:
         self.value  = value
 
 # Navigation functions
-def plazaPrompt():
+def plazaPrompt(player):
     clearScreen()
     print('You are standing in the plaza.')
-    print('You can go to the arena, the store, or the archives.')
+    print('You can go to the arena, the store, or the archives. Or you can check your reflection in the fountain')
     while True:
         iString = input('Where would you like to go?\n')
         if iString == 'arena':
             print('You go to the arena.')
-            arenaPrompt()
+            arenaPrompt(player)
             break
         elif iString == 'store':
             print('You go to the store.')
-            storePrompt()
+            storePrompt(player)
             break
         elif iString == 'archives':
             print('You go to the archives')
-            archivesPrompt()
+            archivesPrompt(player)
             break
+        elif iString == 'check':
+            whoAmI(player)
         print("please enter 'arena', 'store', or 'archives'")
 
-def arenaPrompt():
+def arenaPrompt(player):
     clearScreen()
     print('You are in the arena.')
     print('You can battle or return.')
@@ -60,7 +64,7 @@ def arenaPrompt():
             notAvailable()  # Needs development
         elif iString == 'return':
             print('You have decided to go to return to the plaza.')
-            plazaPrompt()
+            plazaPrompt(player)
             break
         print("Please enter 'battle' or 'return'")
 
@@ -78,11 +82,11 @@ def storePrompt():
             notAvailable()  # Needs development
         elif iString == 'return':
             print('You have decided to return to the plaza.')
-            plazaPrompt()
+            plazaPrompt(player)
             break
         print("Please enter 'buy', 'sell', or 'return'.")
 
-def archivesPrompt():
+def archivesPrompt(player):
     clearScreen()
     print('You are in the archives.')
     print('You can save, load, quit, or return')
@@ -90,18 +94,28 @@ def archivesPrompt():
         iString = input('What would you like to do?\n')
         if iString == 'save':
             print('You have decided to save.')
-            notAvailable()  # Needs development
+            oFile = open('savePlayer.pickle', 'wb')
+            pickle.dump(player, oFile)
+            oFile.close()
+            print('Save successful!')
         elif iString == 'load':
             print('You have decided to load.')
-            notAvailable()  # Needs development
+            iFile = open('savePlayer.pickle', 'rb')
+            player = pickle.load(iFile)
+            iFile.close()
+            print('Load successful!')
+            print('Welcome, ' + player.name)
         elif iString == 'quit':
             print('You have decided to quit the game.')
-            break
+            sys.exit()
         elif iString == 'return':
             print('You have decided to return to the plaza.')
-            plazaPrompt()
+            plazaPrompt(player)
             break
         print("please enter 'save', 'load', 'quit', or 'return'.")
+
+def whoAmI(player):
+    print(f'You are {player.name}. A {player.race} {player.job} wielding a {player.weapon.name}.')
 
 # Place holder for undeveloped features
 def notAvailable():
@@ -111,19 +125,7 @@ def notAvailable():
 def clearScreen():
     print('\n'*40)
 
-# Character creation
-def createPlayer():
-    clearScreen()
-    name = input('What is your name?\n')
-    player = Player(shortSword, 'human', 'knight', name)
-    plazaPrompt() 
 
-# Welcome screen. 
-def splash():
-    clearScreen()
-    print('Welcome to Monster Battle!')
-    input('Press ENTER to continue')
-    createPlayer()
 
 # Predetermined weapon choices
 dagger     = weapon('sword', 'dagger'      , 2, 1)
@@ -138,5 +140,17 @@ sharpStick = weapon('spear', 'sharp stick' , 2, 1)
 woodenSpear= weapon('spear', 'wooden spear', 3, 1)
 halberd    = weapon('spear', 'halberd'     , 4, 1)
 
-# Runs game
-splash()
+# Begin game
+clearScreen()
+print('Welcome to Monster Battle!')
+input('Press ENTER to continue')
+clearScreen()
+choice = input('Would you like to create a character or load?\n')
+if choice == 'create':
+    name = input('What is your name?\n')
+    player = Player(shortSword, 'human', 'knight', name)
+elif choice == 'load':
+    iFile = open('savePlayer.pickle', 'rb')
+    player = pickle.load(iFile)
+    iFile.close()
+plazaPrompt(player) 
