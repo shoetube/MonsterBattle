@@ -1,8 +1,24 @@
 #!/usr/bin/python3 
 # Above tells program where to find python3. Necessary to make program executable
 
+'''
+Archives
+   Done for now
+Navigation
+   Done for now
+Store
+   weapons, armor, recovery items
+   focus on recovery items first to build in a bit of strategy
+Arena
+    gain experience and level up
+       #point based level up. increase attack and accuracy and hp
+   Monsters don't need to be nearly as complex as the player.
+   Why not make a simply slime enemy?
+   I can create several simple enemies of varying difficulty easily.
+   Need to create a file with various monsters in it.
+'''
 # sys to exit game and pickle for saving and loading of player character data
-import sys, pickle
+import sys, pickle, items
 
 # Creature parent class.
 class Creature:
@@ -25,13 +41,6 @@ class Enemy(Creature): # create complex enemies for player to fight in arena
     def __init__(self, weapon, race, job):
         super().__init__(weapon, race, job)
         pass
-        
-class weapon: # Create weapons used player and some enemies
-    def __init__(self, family, name, damage, value):
-        self.family = family # This is category of weapon
-        self.name   = name   # More specific weapon name
-        self.damage = damage # Base damage of weapon
-        self.value  = value  # Base value of weapon. Used for buying and selling
 
 # Navigation and location functions
 def plazaPrompt(player): # Plaza - The central location from which the player can go to other areas.
@@ -138,19 +147,6 @@ def notAvailable():
 def clearScreen():
     print('\n'*40)
 
-# Predetermined weapon choices
-dagger     = weapon('sword', 'dagger'      , 2, 1)
-shortSword = weapon('sword', 'short sword' , 3, 2)
-longSword  = weapon('sword', 'long sword'  , 4, 3)
-
-bigStick   = weapon('club' , 'big stick'   , 2, 1)
-nailBat    = weapon('club' , 'nail bat'    , 3, 2)
-mace       = weapon('club' , 'mace'        , 4, 3)
-
-sharpStick = weapon('spear', 'sharp stick' , 2, 1)
-woodenSpear= weapon('spear', 'wooden spear', 3, 2)
-halberd    = weapon('spear', 'halberd'     , 4, 3)
-
 # Begin game
 clearScreen()
 print("""
@@ -180,7 +176,7 @@ while True:
     choice = input('Would you like to create a character or load?\n')
     if choice == 'create':
         name   = input('What is your name?\n')
-        player = Player(shortSword, 'human', 'knight', name)
+        player = Player(items.shortSword, 'human', 'knight', name)
         break
     elif choice == 'load':
         iFile  = open('savePlayer.pickle', 'rb')
