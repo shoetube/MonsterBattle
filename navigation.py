@@ -3,7 +3,9 @@
 
 '''
 Archives
-   Done for now
+    Create function for loading from file (and error testing)
+    If file exists, return player object else send to player creation
+    function which will return player object to load...
 Navigation
    Done for now
 Store
@@ -118,11 +120,18 @@ def libraryPrompt(player): # Library - Save or load character data and quit game
             print('Save successful!')
         elif iString == 'load':
             print('You have decided to load.')
-            iFile = open('savePlayer.pickle', 'rb')
-            player = pickle.load(iFile)
-            iFile.close()
-            print('Load successful!')
-            print('Welcome, ' + player.name)
+            isSaveFile = True
+            try:
+                iFile  = open('savePlayer.pickle', 'rb')
+            except:
+                print('No save file to load')
+                isSaveFile = False
+            finally:
+                if isSaveFile:
+                    player = pickle.load(iFile)
+                    iFile.close()
+                    print('Load successful!')
+                    print('Welcome, ' + player.name)
         elif iString == 'quit':
             print('You have decided to quit the game.')
             sys.exit()
@@ -172,6 +181,8 @@ print("""
      ########     ####    ####  #######   #######  ########## #########
 """)
 input('                        Press ENTER to continue\n')
+
+# Prompts user to create a new character or load an existing one.
 while True:
     choice = input('Would you like to create a character or load?\n')
     if choice == 'create':
@@ -179,11 +190,19 @@ while True:
         player = Player(items.shortSword, 'human', 'knight', name)
         break
     elif choice == 'load':
-        iFile  = open('savePlayer.pickle', 'rb')
-        player = pickle.load(iFile)
-        iFile.close()
-        break
+        # check if save file exists. If not, throw exeption and prompt to create a new character
+        isSaveFile = True
+        try:
+            iFile  = open('savePlayer.pickle', 'rb')
+        except:
+            print('No save file to load')
+            isSaveFile = False
+        finally:
+            if isSaveFile == True:
+                player = pickle.load(iFile)
+                iFile.close()
+                break
     else:
         print("Plese enter 'create' or 'load'")
-
+# send player to the plaza
 plazaPrompt(player) 
