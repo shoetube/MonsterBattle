@@ -1,15 +1,6 @@
 #!/usr/bin/python3 
 # Above tells program where to find python3. Necessary to make program executable
 
-  ###     ###
- #####   #####
-###############
-###  #####  ###
-###   ###   ###
-###   ###   ###
-###    #    ###
-####       ####
-
 # sys to exit game and pickle for saving and loading of player character data
 import sys, pickle
 
@@ -48,8 +39,8 @@ def plazaPrompt(player): # Plaza - The central location from which the player ca
     print('You are standing in the plaza.\n')
     print('The ARENA is to the WEST.')
     print('The STORE is to the NORTH.')
-    print('The LIBRARY is to the EAST.')
-    print('There is a FOUNTAIN is to the SOUTH.\n')
+    print('The LIBRARY, to the EAST.')
+    print('To the SOUTH, there is a  FOUNTAIN.\n')
     while True: # Input checking
         iString = input('Where would you like to go?\n')
         iString = iString.lower()
@@ -162,8 +153,29 @@ halberd    = weapon('spear', 'halberd'     , 4, 3)
 
 # Begin game
 clearScreen()
-print('Welcome to Monster Battle!\n')
-input('Press ENTER to continue\n')
+print("""
+
+###     ###     ###    ###   ####   ######   ######### ######### #########
+####   ####   ### ###  ####   ###  ###   ##  ######### ######### ##########
+###########  ###   ### #####  ###  ###    #  #  ###  # ###     # ###    ###
+### ### ###  ###   ### ###### ###   #####       ###    ####      ###    ###
+###  #  ###  ###   ### ### ######    #####      ###    ######    ########
+###     ###  ###   ### ###  #####  #    ###     ###    ####      ### ######
+###     ###  ###   ### ###   ####  ##   ###     ###    ###     # ###    ###
+####   ####   ### ###  ###    ###   ######     #####   ######### ###    ###
+##### #####     ###    ####   ###    ####     #######  ######### ###   #####
+
+     #########        ####     ######### ######### #####      #########
+     ###   ####      ######    ######### #########  ###       #########
+     ###     ###    ###  ###   #  ###  # #  ###  #  ###       ###     #
+     ###   ####    ###    ###     ###       ###     ###       ####     
+     #######      ############    ###       ###     ###       ######   
+     ###    ####  #####  #####    ###       ###     ###       ####     
+     ###      ### ###      ###    ###       ###     ###     # ###     #
+     ###   #####  ###      ###   #####     #####    ####  ### #########
+     ########     ####    ####  #######   #######  ########## #########
+""")
+input('                        Press ENTER to continue\n')
 while True:
     choice = input('Would you like to create a character or load?\n')
     if choice == 'create':
