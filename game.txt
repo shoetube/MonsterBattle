@@ -2,21 +2,16 @@
 # character creation
 
 # Archives
-    # will need to save all information necessary to recreate character using character creator. will need to alter character creator to accept exp and other things that may change during the game.
-
+   Done for now
 # Navigation
-    I think I've developed this enough for now.
-
+   Done for now
 # Store
-    weapons, armor, recovery items
-    focus on recovery items first to build in a bit of strategy
+   weapons, armor, recovery items
+   focus on recovery items first to build in a bit of strategy
 
 # Arena
-    # gain experience and level up
-        #point based level up. increase attack and accuracy and hp
-    Monsters don't need to be nearly as complex as the player.
-    Why not make a simply slime enemy?
-    I can create several simple enemies of varying difficulty easily.
-
-
-
+   # gain experience and level up
+       #point based level up. increase attack and accuracy and hp
+   Monsters don't need to be nearly as complex as the player.
+   Why not make a simply slime enemy?
+   I can create several simple enemies of varying difficulty easily.

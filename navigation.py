@@ -1,96 +1,114 @@
 #!/usr/bin/python3 
-import sys
-import pickle
+# Above tells program where to find python3. Necessary to make program executable
+
+  ###     ###
+ #####   #####
+###############
+###  #####  ###
+###   ###   ###
+###   ###   ###
+###    #    ###
+####       ####
+
+# sys to exit game and pickle for saving and loading of player character data
+import sys, pickle
+
+# Creature parent class.
 class Creature:
     def __init__(self, weapon, race, job):
-        self.weapon = weapon
-        self.race   = race
-        self.job    = job
+        self.weapon = weapon # Player weapon is an object with its own properties
+        self.race   = race   # String
+        self.job    = job    # String
         self.alive  = True
 
-class Player(Creature):
+class Player(Creature): # Player class used for user character
     def __init__(self, weapon, race, job, name):
         super().__init__(weapon, race, job)
-        self.name       = name
-        self.weapon     = weapon
-        self.hp         = 10
-        self.maxHp      = 10
-        self.experience = 0
-        self.level      = 1
+        self.name       = name   # Player name. A string created from user input
+        self.hp         = 10     # Current health points
+        self.maxHp      = 10     # Maximum health points
+        self.experience = 0      # Current experience points
+        self.level      = 1      # Current player level
 
-class Enemy(Creature):
+class Enemy(Creature): # create complex enemies for player to fight in arena
     def __init__(self, weapon, race, job):
         super().__init__(weapon, race, job)
         pass
         
-class weapon:
+class weapon: # Create weapons used player and some enemies
     def __init__(self, family, name, damage, value):
-        self.family = family
-        self.name   = name
-        self.damage = damage
-        self.value  = value
+        self.family = family # This is category of weapon
+        self.name   = name   # More specific weapon name
+        self.damage = damage # Base damage of weapon
+        self.value  = value  # Base value of weapon. Used for buying and selling
 
-# Navigation functions
-def plazaPrompt(player):
+# Navigation and location functions
+def plazaPrompt(player): # Plaza - The central location from which the player can go to other areas.
     clearScreen()
-    print('You are standing in the plaza.')
-    print('You can go to the arena, the store, or the archives. Or you can check your reflection in the fountain')
-    while True:
+    print('You are standing in the plaza.\n')
+    print('The ARENA is to the WEST.')
+    print('The STORE is to the NORTH.')
+    print('The LIBRARY is to the EAST.')
+    print('There is a FOUNTAIN is to the SOUTH.\n')
+    while True: # Input checking
         iString = input('Where would you like to go?\n')
-        if iString == 'arena':
+        iString = iString.lower()
+        if iString == 'arena' or iString == 'west':
             print('You go to the arena.')
             arenaPrompt(player)
             break
-        elif iString == 'store':
+        elif iString == 'store' or iString == 'north':
             print('You go to the store.')
             storePrompt(player)
             break
-        elif iString == 'archives':
-            print('You go to the archives')
-            archivesPrompt(player)
+        elif iString == 'library' or iString == 'east':
+            print('You go to the library')
+            libraryPrompt(player)
             break
-        elif iString == 'check':
-            whoAmI(player)
-        print("please enter 'arena', 'store', or 'archives'")
+        elif iString == 'fountain' or iString == 'south':
+            fountainPrompt(player)
+        print("please enter 'arena', 'store', 'library', or 'fountain'")
 
-def arenaPrompt(player):
+def arenaPrompt(player): # Arena - The player can battle enemies here to gain experience
     clearScreen()
     print('You are in the arena.')
-    print('You can battle or return.')
-    while True:
+    print('You can BATTLE or EXIT to the plaza.')
+    while True: # Input checking
         iString = input('What would you like to do?\n')
+        iString = iString.lower()
         if iString == 'battle':
             print('You have decided to battle.')
             notAvailable()  # Needs development
-        elif iString == 'return':
-            print('You have decided to go to return to the plaza.')
+        elif iString == 'exit' or iString == 'plaza':
+            print('You have decided to go to exit to the plaza.')
             plazaPrompt(player)
             break
-        print("Please enter 'battle' or 'return'")
+        print("Please enter 'battle' or 'exit'")
 
-def storePrompt():
+def storePrompt(player): # Store - buy and sell weapons and recovery items
     clearScreen()
     print('You are in the store.')
-    print('You can buy, sell, or return')
-    while True:
+    print('You can BUY, SELL, or EXIT to the plaza')
+    while True: # Input checking
         iString = input('What would you like to do?\n')
+        iString = iString.lower()
         if iString == 'buy':
             print('You decide to buy.')
             notAvailable()  # Needs development
         elif iString == 'sell':
             print('You decide to sell.')
             notAvailable()  # Needs development
-        elif iString == 'return':
-            print('You have decided to return to the plaza.')
+        elif iString == 'exit' or iString == 'plaza':
+            print('You have decided to exit to the plaza.')
             plazaPrompt(player)
             break
-        print("Please enter 'buy', 'sell', or 'return'.")
+        print("Please enter 'buy', 'sell', or 'exit'.")
 
-def archivesPrompt(player):
+def libraryPrompt(player): # Library - Save or load character data and quit game. A utility area.
     clearScreen()
-    print('You are in the archives.')
-    print('You can save, load, quit, or return')
-    while True:
+    print('You are in the library.')
+    print('You can SAVE, LOAD, QUIT the game, or EXIT to the plaza')
+    while True: # Input checking
         iString = input('What would you like to do?\n')
         if iString == 'save':
             print('You have decided to save.')
@@ -108,14 +126,18 @@ def archivesPrompt(player):
         elif iString == 'quit':
             print('You have decided to quit the game.')
             sys.exit()
-        elif iString == 'return':
-            print('You have decided to return to the plaza.')
+        elif iString == 'exit' or iString == 'plaza':
+            print('You have decided to exit to the plaza.')
             plazaPrompt(player)
             break
-        print("please enter 'save', 'load', 'quit', or 'return'.")
+        else:
+            print("please enter 'save', 'load', 'quit', or 'exit'.")
 
-def whoAmI(player):
+def fountainPrompt(player): # Examine player character information
+    print('You look at your reflection in the water of the fountain')
     print(f'You are {player.name}. A {player.race} {player.job} wielding a {player.weapon.name}.')
+    input('press ENTER to continue\n')
+    plazaPrompt(player)
 
 # Place holder for undeveloped features
 def notAvailable():
@@ -125,32 +147,35 @@ def notAvailable():
 def clearScreen():
     print('\n'*40)
 
-
-
 # Predetermined weapon choices
 dagger     = weapon('sword', 'dagger'      , 2, 1)
-shortSword = weapon('sword', 'short sword' , 3, 1)
-longSword  = weapon('sword', 'long sword'  , 4, 1)
+shortSword = weapon('sword', 'short sword' , 3, 2)
+longSword  = weapon('sword', 'long sword'  , 4, 3)
 
 bigStick   = weapon('club' , 'big stick'   , 2, 1)
-nailBat    = weapon('club' , 'nail bat'    , 3, 1)
-mace       = weapon('club' , 'mace'        , 4, 1)
+nailBat    = weapon('club' , 'nail bat'    , 3, 2)
+mace       = weapon('club' , 'mace'        , 4, 3)
 
 sharpStick = weapon('spear', 'sharp stick' , 2, 1)
-woodenSpear= weapon('spear', 'wooden spear', 3, 1)
-halberd    = weapon('spear', 'halberd'     , 4, 1)
+woodenSpear= weapon('spear', 'wooden spear', 3, 2)
+halberd    = weapon('spear', 'halberd'     , 4, 3)
 
 # Begin game
 clearScreen()
-print('Welcome to Monster Battle!')
-input('Press ENTER to continue')
-clearScreen()
-choice = input('Would you like to create a character or load?\n')
-if choice == 'create':
-    name = input('What is your name?\n')
-    player = Player(shortSword, 'human', 'knight', name)
-elif choice == 'load':
-    iFile = open('savePlayer.pickle', 'rb')
-    player = pickle.load(iFile)
-    iFile.close()
+print('Welcome to Monster Battle!\n')
+input('Press ENTER to continue\n')
+while True:
+    choice = input('Would you like to create a character or load?\n')
+    if choice == 'create':
+        name   = input('What is your name?\n')
+        player = Player(shortSword, 'human', 'knight', name)
+        break
+    elif choice == 'load':
+        iFile  = open('savePlayer.pickle', 'rb')
+        player = pickle.load(iFile)
+        iFile.close()
+        break
+    else:
+        print("Plese enter 'create' or 'load'")
+
 plazaPrompt(player) 
