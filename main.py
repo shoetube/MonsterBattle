@@ -8,7 +8,6 @@ Navigation
 Store
     weapons, armor, recovery items
     focus on recovery items first to build in a bit of strategy
-    make player method for using potions. too messy doing it procedurally.
 Arena
     gain experience and level up
     #point based level up. increase attack and accuracy and hp
@@ -102,7 +101,7 @@ def arenaPrompt(player):
 def battle(player):
     clearScreen()
     enemy = enemies.blueSlime
-    e = enemy
+    e = enemy   # Use short variable name to shorten f strings
     print(f'{player.name} vs {enemy.name}!')
     battleRound = 1
     # reset state of enemy
@@ -230,8 +229,8 @@ def libraryPrompt(player):
                 if isSaveFile:
                     player = pickle.load(iFile)
                     iFile.close()
-            print('\nLoad successful!\n')
-            print('Welcome, ' + player.name)
+                    print('\nLoad successful!\n')
+                    print('Welcome, ' + player.name)
         elif iString == 'quit':
             print('You have decided to quit the game.')
             sys.exit()
