@@ -29,19 +29,19 @@ MAX_POT = 3  # Maximum allowed potions in inventory
 class Creature:
     def __init__(self, weapon, race, job):
         self.weapon = weapon    # Player weapon is a class object
-        self.race = race      # String
-        self.job = job       # String
+        self.race = race        # String
+        self.job = job          # String
         self.alive = True
 
 
 class Player(Creature):     # Player class used for user character
     def __init__(self, weapon, race, job, name):
         super().__init__(weapon, race, job)
-        self.name = name   # Player name. String created from user input
-        self.hp = 10     # Current health points
-        self.maxHp = 10     # Maximum health points
-        self.experience = 0      # Current experience points
-        self.level = 1      # Current player level
+        self.name = name        # Player name. String created from user input
+        self.hp = 10            # Current health points
+        self.maxHp = 10         # Maximum health points
+        self.experience = 0     # Current experience points
+        self.level = 1          # Current player level
         self.potion = items.potion
         self.numOfPot = 1
 
@@ -100,11 +100,11 @@ def arenaPrompt(player):
 
 
 def battle(player):
-    enemy = enemies.blueSlime
     clearScreen()
+    enemy = enemies.blueSlime
+    e = enemy
     print(f'{player.name} vs {enemy.name}!')
     battleRound = 1
-    e = enemy
     # reset state of enemy
     enemy.hp = enemy.maxHp
     enemy.alive = True
@@ -122,12 +122,13 @@ def battle(player):
             print(f'You attack the {e.name} with you {player.weapon.name}.')
             atkDmg = randint(0, player.weapon.damage)
 
-        # Player attacks enemy
-        if atkDmg > 0:  # 0 damage is treated as a miss
-            print(f'You hit the {e.name}. The {e.name} loses {atkDmg} hp.')
-            enemy.hp -= atkDmg
-        else:
-            print(f'You miss the {e.name}.')
+            # Player attacks enemy
+            if atkDmg > 0:  # 0 damage is treated as a miss
+                print(f'You hit the {e.name}. The {e.name} loses {atkDmg} hp.')
+                enemy.hp -= atkDmg
+            else:
+                print(f'You miss the {e.name}.')
+
         elif iString == 'heal':
 
             # If player has no potions, continue to beginning of loop
@@ -143,19 +144,19 @@ def battle(player):
             print(f'The {enemy.name} attacks you with its {enemy.weapon}.')
             atkDmg = randint(0, enemy.damage)
 
-        # Enemy attacks player
-        if atkDmg > 0:
-            print(f'The {enemy.name} hits you. You lose {atkDmg} hp.')
-            player.hp -= atkDmg
-        else:
-            print(f'The {enemy.name} misses you.')
+            # Enemy attacks player
+            if atkDmg > 0:
+                print(f'The {enemy.name} hits you. You lose {atkDmg} hp.')
+                player.hp -= atkDmg
+            else:
+                print(f'The {enemy.name} misses you.')
 
-        # Game ends if player reaches 0 HP
-        if player.hp <= 0:
-            print(f'You have been slain by the {enemy.name}.')
-            player.alive = False
-            input('\nGAME OVER.\n')
-            sys.exit()
+            # Game ends if player reaches 0 HP
+            if player.hp <= 0:
+                print(f'You have been slain by the {enemy.name}.')
+                player.alive = False
+                input('\nGAME OVER.\n')
+                sys.exit()
 
         else:
             print(f'You have slain the {enemy.name}.')
@@ -181,19 +182,19 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
             print(f'You can have up to {MAX_POT} in your inventory')
             buyInput = input('How many potions would you like?\n')
 
-        if buyInput.isdigit():
-            numToBuy = int(buyInput)
+            if buyInput.isdigit():
+                numToBuy = int(buyInput)
 
-            if numToBuy + player.numOfPot <= MAX_POT:
-                print(f'Here you go!')
-                player.numOfPot += numToBuy
-            elif player.numOfPot >= MAX_POT:
-                print("You can't carry any more potion!")
-            else:
-                numToBuy = MAX_POT - player.numOfPot
-                print("You can't carry that many!")
-                print(f'I will give you {numToBuy} potions instead.')
-                player.numOfPot += numToBuy
+                if numToBuy + player.numOfPot <= MAX_POT:
+                    print(f'Here you go!')
+                    player.numOfPot += numToBuy
+                elif player.numOfPot >= MAX_POT:
+                    print("You can't carry any more potions!")
+                else:
+                    numToBuy = MAX_POT - player.numOfPot
+                    print("You can't carry that many!")
+                    print(f'I will give you {numToBuy} potions instead.')
+                    player.numOfPot += numToBuy
         elif iString == 'sell':
             print('You decide to sell.')
             notAvailable()      # Needs development
@@ -243,6 +244,7 @@ def libraryPrompt(player):
 
 
 def fountainPrompt(player):     # Examine player character information
+    clearScreen()
     p = player                  # shorten player for formatting purposes
     print('\nYou look at your reflection in the water of the fountain')
     print(f'You are {p.name}. A {p.race} {p.job} wielding a {p.weapon.name}.')
