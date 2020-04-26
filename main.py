@@ -2,15 +2,14 @@
 # Above tells program where to find python3.
 '''
 Library
-    Add other attributes to increase when leveling up
+    Done for now
 Navigation
     Done for now
 Store
-    weapons, armor, recovery items
     currency exchange
-    focus on recovery items first to build in a bit of strategy
+    weapons, armor, recovery items
 Arena
-    option to flee
+    Done for now
 Fountain
     Done for now
 '''
@@ -24,6 +23,7 @@ from random import randint
 
 # CONSTANTS
 INC_HP_AMT = 5
+INC_STR_AMT = 1
 MAX_POT = 3  # Maximum allowed potions in inventory
 TITLE_STRING = """
 
@@ -76,6 +76,8 @@ class Player(Creature):     # Player class used for user character
         self.name = name        # Player name. String created from user input
         self.hp = 10            # Current health points
         self.maxHp = 10         # Maximum health points
+        self.strength = 1       # Increases damage dealt to enemy
+        self.damage = self.strength + self.weapon.damage
         self.experience = 0     # Current experience points
         self.level = 1          # Current player level
         self.potion = items.potion
@@ -285,19 +287,19 @@ def battle(player):
 
     # WHILE - battle loop
     while player.alive and enemy.alive:
+        print(f'Round {battleRound}')
         print(f'\nRemaining player health: {player.hp}/{player.maxHp}')
         print(f'Remaining enemy health: {enemy.hp}/{enemy.maxHp}')
-        print('\nYou can ATTACK or HEAL\n')
+        print('\nYou can ATTACK, HEAL, or SURRENDER.\n')
         iString = input('What would you like to do?\n')
         iString = iString.lower()
         clearScreen()
-        print(f'Round {battleRound}')
 
         # ATTACK
         if iString == 'attack':
             print(f'You attack the {enemy.name} ' +
                   f'with you {player.weapon.name}.')
-            atkDmg = randint(0, player.weapon.damage)
+            atkDmg = randint(0, player.damage)
             # Player attacks enemy
             if atkDmg > 0:  # 0 damage is treated as a miss
                 print(f'You hit the {enemy.name}. ' +
@@ -315,6 +317,27 @@ def battle(player):
             else:   # ELSE use potion
                 items.potion.use(player)
                 print(f'You have {player.numOfPot} potions left')
+
+        # SURRENDER
+        elif iString == 'surrender':
+            LOSE_EXP_SURRENDER = player.experience // 3
+            print(f'If you surrender, you will lose {LOSE_EXP_SURRENDER} ' +
+                   'experience.\n')
+            choice = input('Enter YES or NO.\n')
+            choice = choice.lower()
+            if choice == 'yes':
+                oldExp = player.experience
+                player.experience -= LOSE_EXP_SURRENDER
+                print(f'\nYour experience points went from {oldExp} to ' +
+                        '{player.experience}.')
+                input('\nPress ENTER to continue\n')
+                arenaPrompt(player)
+            elif choice == 'no':
+                clearScreen()
+                continue
+
+        else:
+            continue
 
         # IF enemy alive, enemy attacks player
         if enemy.hp > 0:
@@ -480,7 +503,8 @@ def libraryPrompt(player):
 
 
 def levelUp(player):
-    print(f'You can increase your HP by {INC_HP_AMT}, or you can CANCEL.\n')
+    print(f'You can increase your HP by {INC_HP_AMT}, your STRENGTH by ' +
+          f'{INC_STR_AMT}, or you can CANCEL.\n')
     while True:
         iString = input('What would you like to do?\n')
         iString = iString.lower()
@@ -491,6 +515,16 @@ def levelUp(player):
             player.experience -= player.levelUp()
             player.level += 1
             print(f'\nYour maximum HP went from {oldHp} to {player.maxHp}.')
+            print(f'You are now level {player.level}!')
+            input('\nPress ENTER to continue.\n')
+            break
+        if iString == 'strength':
+            oldStr = player.strength
+            player.strength += INC_STR_AMT
+            player.experience -= player.levelUp()
+            player.hp = player.maxHp
+            player.level += 1
+            print(f'\nYour strength went from {oldStr} to {player.strength}.')
             print(f'You are now level {player.level}!')
             input('\nPress ENTER to continue.\n')
             break
@@ -524,6 +558,7 @@ def fountainPrompt(player):     # Examine player character information
                   f'{player.experience} points of experience.')
             print(f'You are wielding a {player.weapon.name}.')
             print(f'You have {player.hp} of {player.maxHp} HP.')
+            print(f'You have {player.strength} strength.')
             print(f'You are carrying {player.numOfPot} potions.')
             print(f'You have {player.gold} pieces of gold.')
             input('\npress ENTER to continue\n')
