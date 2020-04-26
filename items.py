@@ -12,17 +12,17 @@ class weapon:   # Create weapons used by player and some enemies
 
 
 # Predetermined weapon choices
-dagger = weapon('sword', 'dagger', 2, 1)
-shortSword = weapon('sword', 'short sword', 3, 2)
-longSword = weapon('sword', 'long sword', 4, 3)
+dagger =      weapon('sword', 'dagger',       2, 1)
+shortSword =  weapon('sword', 'short sword',  3, 2)
+longSword =   weapon('sword', 'long sword',   4, 3)
 
-bigStick = weapon('club', 'big stick', 2, 1)
-nailBat = weapon('club', 'nail bat', 3, 2)
-mace = weapon('club', 'mace', 4, 3)
+bigStick =    weapon('club',  'big stick',    2, 1)
+nailBat =     weapon('club',  'nail bat',     3, 2)
+mace =        weapon('club',  'mace',         4, 3)
 
-sharpStick = weapon('spear', 'sharp stick', 2, 1)
+sharpStick =  weapon('spear', 'sharp stick',  2, 1)
 woodenSpear = weapon('spear', 'wooden spear', 3, 2)
-halberd = weapon('spear', 'halberd', 4, 3)
+halberd =     weapon('spear', 'halberd',      4, 3)
 
 
 # restores about 1/3 of player's health untested. should probably change
@@ -32,11 +32,13 @@ class potion:
         pass
 
     def use(target):
-        oldHp = target.hp
+        oldHp = target.hp   # HP before healing
         target.numOfPot -= 1
         healAmt = target.maxHp // 3
         target.hp += healAmt
+
         if target.hp > target.maxHp:
             target.hp = target.maxHp
+
         newHp = target.hp
         print(f'You gain {newHp-oldHp} hp!')
