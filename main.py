@@ -2,17 +2,15 @@
 # Above tells program where to find python3.
 '''
 Library
-    Done for now
+    Add other attributes to increase when leveling up
 Navigation
     Done for now
 Store
     weapons, armor, recovery items
+    currency exchange
     focus on recovery items first to build in a bit of strategy
 Arena
     option to flee
-    gain experience and level up
-    gain money to use in store
-    #point based level up. increase attack and accuracy and hp
 Fountain
     Done for now
 '''
@@ -21,9 +19,11 @@ import sys
 import pickle
 import items
 import enemies
+import math
 from random import randint
 
 # CONSTANTS
+INC_HP_AMT = 5
 MAX_POT = 3  # Maximum allowed potions in inventory
 TITLE_STRING = """
 
@@ -80,6 +80,10 @@ class Player(Creature):     # Player class used for user character
         self.level = 1          # Current player level
         self.potion = items.potion
         self.numOfPot = 1
+        self.gold = 0
+
+    def levelUp(self):
+        return math.floor((self.level**1.5)*5)
 
 
 class Enemy(Creature):  # Create complex enemies. (Not in use)
@@ -180,6 +184,7 @@ def getPlayer():
     # Prompts user to create a new character or load an existing one.
     while True:
         choice = input('Would you like to create a character or load?\n')
+        choice = choice.lower()
 
         # CREATE
         if choice == 'create':
@@ -250,8 +255,8 @@ def plazaPrompt(player):
 # Arena - The player can battle enemies here to gain experience
 def arenaPrompt(player):
     clearScreen()
-    print('You are in the arena.')
-    print('You can BATTLE or EXIT to the plaza.')
+    print('You are in the arena.\n')
+    print('You can BATTLE or EXIT to the plaza.\n')
     while True:     # Input checking
         iString = input('What would you like to do?\n')
         iString = iString.lower()
@@ -266,7 +271,7 @@ def arenaPrompt(player):
             print('You have decided to go to exit to the plaza.')
             plazaPrompt(player)
             break
-        print("Please enter 'battle' or 'exit'")
+        print("\nPlease enter 'battle' or 'exit'\n")
 
 
 def battle(player):
@@ -282,8 +287,9 @@ def battle(player):
     while player.alive and enemy.alive:
         print(f'\nRemaining player health: {player.hp}/{player.maxHp}')
         print(f'Remaining enemy health: {enemy.hp}/{enemy.maxHp}')
-        print('\nYou can ATTACK or HEAL')
+        print('\nYou can ATTACK or HEAL\n')
         iString = input('What would you like to do?\n')
+        iString = iString.lower()
         clearScreen()
         print(f'Round {battleRound}')
 
@@ -333,6 +339,11 @@ def battle(player):
         else:
             print(f'You have slain the {enemy.name}.')
             enemy.alive = False
+            player.experience += enemy.grantExp
+            gainGold = enemy.dropGold()
+            player.gold += gainGold
+            print(f'\nYou gain {enemy.grantExp} experience.')
+            print(f'You found {gainGold} pieces of gold.\n')
             input('\nPress ENTER to continue\n')
 
         battleRound += 1    # increment round number
@@ -353,7 +364,7 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
         if iString == 'buy':
             clearScreen()
             print('\nYou decide to buy.\n')
-            print('Only potions are available now, but they are free!')
+            print('Only potions are available now, but they are free!\n')
             print(f'You currently have {player.numOfPot} potions.')
             print(f'You can have up to {MAX_POT} in your inventory\n')
             buyInput = input('How many potions would you like?\n')
@@ -364,7 +375,7 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
 
                 # If the player can carry that many...
                 if numToBuy + player.numOfPot <= MAX_POT:
-                    print(f'Here you go!')
+                    print(f'\nHere you go!')
                     player.numOfPot += numToBuy
 
                 # If the player cannot carry any more potions...
@@ -406,14 +417,30 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
 # Library - Save or load character data and quit game. A utility area.
 def libraryPrompt(player):
     clearScreen()
-    print('You are in the library.')
-    print('You can SAVE, LOAD, QUIT the game, or EXIT to the plaza')
+    print('You are in the library.\n')
+    print('You can STUDY to level up.')
+    print('You can SAVE or LOAD a character.')
+    print('You can QUIT the game, or EXIT to the plaza\n')
 
     while True:     # Input checking
         iString = input('What would you like to do?\n')
+        iString = iString.lower()
+
+        # STUDY
+        if iString == 'study':
+            clearScreen()
+            print('You decide to study\n')
+            print(f'You currently have {player.experience} experience.')
+            print(f'You need {player.levelUp()} experience to level up.\n')
+            if player.experience >= player.levelUp():
+                levelUp(player)
+            else:
+                print("You don't have enough experience yet.\n")
+                input('press ENTER to continue\n')
+                libraryPrompt(player)
 
         # SAVE
-        if iString == 'save':
+        elif iString == 'save':
             print('You have decided to save.')
             oFile = open('savePlayer.pickle', 'wb')
             pickle.dump(player, oFile)
@@ -438,7 +465,7 @@ def libraryPrompt(player):
 
         # QUIT THE GAME
         elif iString == 'quit':
-            print('You have decided to quit the game.')
+            print('\nYou have decided to quit the game.')
             sys.exit()
 
         # GO TO THE PLAZA
@@ -450,6 +477,31 @@ def libraryPrompt(player):
         # INVALID INPUT
         else:
             print("please enter 'save', 'load', 'quit', or 'exit'.")
+
+
+def levelUp(player):
+    print(f'You can increase your HP by {INC_HP_AMT}, or you can CANCEL.\n')
+    while True:
+        iString = input('What would you like to do?\n')
+        iString = iString.lower()
+        if iString == 'hp':
+            oldHp = player.maxHp
+            player.maxHp += INC_HP_AMT
+            player.hp = player.maxHp
+            player.experience -= player.levelUp()
+            player.level += 1
+            print(f'\nYour maximum HP went from {oldHp} to {player.maxHp}.')
+            print(f'You are now level {player.level}!')
+            input('\nPress ENTER to continue.\n')
+            break
+        elif iString == 'cancel':
+            print('\nLevel up canceled.')
+            input('\nPress ENTER to continue.\n')
+            break
+        else:
+            print("Please enter 'hp' or 'cancel'.")
+
+    libraryPrompt(player)
 
 
 def fountainPrompt(player):     # Examine player character information
@@ -465,11 +517,15 @@ def fountainPrompt(player):     # Examine player character information
         # LOOK at reflection
         if iString == 'look':
             clearScreen()
-            print('\nYou look at your reflection in the water of the fountain')
-            print(f'You are {player.name}. A {player.race} {player.job} ' +
-                  f'wielding a {player.weapon.name}.')
-            print(f'You have {player.hp} of {player.maxHp}.')
+            print('\n')
+            print('You look at your reflection in the water of the fountain\n')
+            print(f'You are {player.name}, a {player.race} {player.job}.')
+            print(f'You are currently level {player.level} with ' +
+                  f'{player.experience} points of experience.')
+            print(f'You are wielding a {player.weapon.name}.')
+            print(f'You have {player.hp} of {player.maxHp} HP.')
             print(f'You are carrying {player.numOfPot} potions.')
+            print(f'You have {player.gold} pieces of gold.')
             input('\npress ENTER to continue\n')
             fountainPrompt(player)
             break
