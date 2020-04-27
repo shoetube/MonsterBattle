@@ -19,7 +19,7 @@ import pickle
 import items
 import enemies
 import math
-from random import randint
+import random
 
 # CONSTANTS
 INC_HP_AMT = 5
@@ -77,6 +77,9 @@ class Player(Creature):     # Player class used for user character
         self.hp = 10            # Current health points
         self.maxHp = 10         # Maximum health points
         self.strength = 1       # Increases damage dealt to enemy
+        self.endurance = 1
+        self.agility = 1
+        self.dexterity = 1
         self.damage = self.strength + self.weapon.damage
         self.experience = 0     # Current experience points
         self.level = 1          # Current player level
@@ -225,7 +228,7 @@ def plazaPrompt(player):
     print('The ARENA is to the WEST.')
     print('The STORE is to the NORTH.')
     print('The LIBRARY, to the EAST.')
-    print('To the SOUTH, there is a  FOUNTAIN.\n')
+    print('To the SOUTH, there is a FOUNTAIN.\n')
     while True:     # Input checking
         iString = input('Where would you like to go?\n')
         iString = iString.lower()
@@ -278,16 +281,16 @@ def arenaPrompt(player):
 
 def battle(player):
     clearScreen()
-    enemy = enemies.blueSlime
-    print(f'{player.name} vs {enemy.name}!')
-    battleRound = 1
     # reset state of enemy
+    enemy = random.choice(enemies.enemyList)
     enemy.hp = enemy.maxHp
     enemy.alive = True
+    print(f'{player.name} vs {enemy.name}!')
+    battleRound = 1
 
     # WHILE - battle loop
     while player.alive and enemy.alive:
-        print(f'Round {battleRound}')
+        print(f'\nRound {battleRound}')
         print(f'\nRemaining player health: {player.hp}/{player.maxHp}')
         print(f'Remaining enemy health: {enemy.hp}/{enemy.maxHp}')
         print('\nYou can ATTACK, HEAL, or SURRENDER.\n')
@@ -299,7 +302,7 @@ def battle(player):
         if iString == 'attack':
             print(f'You attack the {enemy.name} ' +
                   f'with you {player.weapon.name}.')
-            atkDmg = randint(0, player.damage)
+            atkDmg = random.randint(0, player.damage)
             # Player attacks enemy
             if atkDmg > 0:  # 0 damage is treated as a miss
                 print(f'You hit the {enemy.name}. ' +
@@ -323,26 +326,31 @@ def battle(player):
             LOSE_EXP_SURRENDER = player.experience // 3
             print(f'If you surrender, you will lose {LOSE_EXP_SURRENDER} ' +
                    'experience.\n')
-            choice = input('Enter YES or NO.\n')
-            choice = choice.lower()
-            if choice == 'yes':
-                oldExp = player.experience
-                player.experience -= LOSE_EXP_SURRENDER
-                print(f'\nYour experience points went from {oldExp} to ' +
-                        '{player.experience}.')
-                input('\nPress ENTER to continue\n')
-                arenaPrompt(player)
-            elif choice == 'no':
-                clearScreen()
-                continue
-
+            while True:
+                choice = input('Are you sure that you want to surrender?\n')
+                choice = choice.lower()
+                if choice == 'yes':
+                    oldExp = player.experience
+                    player.experience -= LOSE_EXP_SURRENDER
+                    print(f'\nYour experience points went from {oldExp} to ' +
+                          f'{player.experience}.')
+                    input('\nPress ENTER to continue\n')
+                    arenaPrompt(player)
+                elif choice == 'no':
+                    clearScreen()
+                    break
+                else:
+                    clearScreen()
+                    print('\nPlease enter YES or NO\n')
+                    continue
+            continue
         else:
             continue
 
         # IF enemy alive, enemy attacks player
         if enemy.hp > 0:
             print(f'The {enemy.name} attacks you with its {enemy.weapon}.')
-            atkDmg = randint(0, enemy.damage)
+            atkDmg = random.randint(0, enemy.damage)
 
             # Enemy attacks player
             if atkDmg > 0:
@@ -367,18 +375,19 @@ def battle(player):
             player.gold += gainGold
             print(f'\nYou gain {enemy.grantExp} experience.')
             print(f'You found {gainGold} pieces of gold.\n')
-            input('\nPress ENTER to continue\n')
+            input('Press ENTER to continue\n')
 
         battleRound += 1    # increment round number
     # END WHILE
-
     arenaPrompt(player)
 
 
 def storePrompt(player):    # Store - buy and sell weapons and recovery items
+    potionCost = 2
     clearScreen()
     print('You are in the store.\n')
     print('You can BUY, SELL, or EXIT to the plaza\n')
+
     while True:     # Input checking
         iString = input('What would you like to do?\n')
         iString = iString.lower()
@@ -387,35 +396,42 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
         if iString == 'buy':
             clearScreen()
             print('\nYou decide to buy.\n')
-            print('Only potions are available now, but they are free!\n')
+            print(f'You can buy potions for {potionCost} gold each\n')
             print(f'You currently have {player.numOfPot} potions.')
             print(f'You can have up to {MAX_POT} in your inventory\n')
+
+            if player.numOfPot >= MAX_POT:
+                print("You can't carry any more potions!\n")
+                input('Press ENTER to continue.\n')
+                storePrompt(player)
+
             buyInput = input('How many potions would you like?\n')
 
             # How many potions does the player want?
             if buyInput.isdigit():
-                numToBuy = int(buyInput)
+                quantity = int(buyInput)
+                totalCost = quantity * potionCost
 
-                # If the player can carry that many...
-                if numToBuy + player.numOfPot <= MAX_POT:
-                    print(f'\nHere you go!')
-                    player.numOfPot += numToBuy
+                # If player can afford that many
+                if player.gold >= totalCost:
 
-                # If the player cannot carry any more potions...
-                elif player.numOfPot >= MAX_POT:
-                    print("\nYou can't carry any more potions!")
+                    # If player can hold that many
+                    if player.numOfPot + quantity <= MAX_POT:
+                        player.gold -= totalCost
+                        player.numOfPot += quantity
+                        print('\nHere you go!\n')
+                        input('Press ENTER to continue.\n')
+                        storePrompt(player)
 
-                # If the player can carry some of them...
+                    else:
+                        print('you cannot hold that many!\n')
+                        input('Press ENTER to continue.\n')
+                        storePrompt(player)
+
                 else:
-                    numToBuy = MAX_POT - player.numOfPot
-                    print("\nYou can't carry that many!")
-                    print(f'I will give you {numToBuy} potions instead.')
-                    player.numOfPot += numToBuy
-
-            # return to store prompt after purchase
-            input('\npress ENTER to continue\n')
-            storePrompt(player)
-            break
+                    print('you cannot afford that many!\n')
+                    input('Press ENTER to continue.\n')
+                    storePrompt(player)
 
         # SELL
         elif iString == 'sell':
@@ -583,7 +599,7 @@ def fountainPrompt(player):     # Examine player character information
 
         # INVALID INPUT
         else:
-            print("Please enter 'look', 'drink', or 'exit'")
+            print("\nPlease enter 'look', 'drink', or 'exit'")
 
 
 main()
