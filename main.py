@@ -15,25 +15,25 @@ INC_STR_AMT = 1
 MAX_POT = 3  # Maximum allowed potions in inventory
 TITLE_STRING = """
 
-###     ###     ###    ###   ####   ######   ######### ######### #########
-####   ####   ### ###  ####   ###  ###   ##  ######### ######### ##########
-###########  ###   ### #####  ###  ###    #  #  ###  # ###     # ###    ###
-### ### ###  ###   ### ###### ###   #####       ###    ####      ###    ###
-###  #  ###  ###   ### ### ######    #####      ###    ######    ########
-###     ###  ###   ### ###  #####  #    ###     ###    ####      ### ######
-###     ###  ###   ### ###   ####  ##   ###     ###    ###     # ###    ###
-####   ####   ### ###  ###    ###   ######     #####   ######### ###    ###
-##### #####     ###    ####   ###    ####     #######  ######### ###   #####
+###     ###    ###    ###   ####  ######  ######### ######### #########
+####   ####  ### ###  ####   ### ###   ## ######### ######### ##########
+########### ###   ### #####  ### ###    # #  ###  # ###     # ###    ###
+### ### ### ###   ### ###### ###  #####      ###    ####      ###    ###
+###  #  ### ###   ### ### ######   #####     ###    ######    ########
+###     ### ###   ### ###  ##### #    ###    ###    ####      ### ######
+###     ### ###   ### ###   #### ##   ###    ###    ###     # ###    ###
+####   ####  ### ###  ###    ###  ######    #####   ######### ###    ###
+##### #####    ###    ####   ###   ####    #######  ######### ###   #####
 
-     #########        ####     ######### ######### #####      #########
-     ###   ####      ######    ######### #########  ###       #########
-     ###     ###    ###  ###   #  ###  # #  ###  #  ###       ###     #
-     ###   ####    ###    ###     ###       ###     ###       ####
-     #######      ############    ###       ###     ###       ######
-     ###    ####  #####  #####    ###       ###     ###       ####
-     ###      ### ###      ###    ###       ###     ###     # ###     #
-     ###   #####  ###      ###   #####     #####    ####  ### #########
-     ########     ####    ####  #######   #######  ########## #########
+    #########        ####    ######### ######### #####      #########
+    ###   ####      ######   ######### #########  ###       #########
+    ###     ###    ###  ###  #  ###  # #  ###  #  ###       ###     #
+    ###   ####    ###    ###    ###       ###     ###       ####
+    #######      ############   ###       ###     ###       ######
+    ###    ####  #####  #####   ###       ###     ###       ####
+    ###      ### ###      ###   ###       ###     ###     # ###     #
+    ###   #####  ###      ###  #####     #####    ####  ### #########
+    ########     ####    #### #######   #######  ########## #########
 """
 
 
@@ -204,38 +204,43 @@ def printTitle(titleString):
     pressEnter()
 
 
+def savePlayer(player):
+    oFile = open('savePlayer.pickle', 'wb')
+    pickle.dump(player, oFile)
+    oFile.close()
+
+
+def loadPlayer():
+    isSaveFile = True
+    try:
+        iFile = open('savePlayer.pickle', 'rb')
+    except IOError:
+        print('\nNo save file to load\n')
+        isSaveFile = False
+    finally:
+        if isSaveFile:
+            player = pickle.load(iFile)
+            iFile.close()
+            return player
+
+
 def getPlayer():
     # Prompts user to create a new character or load an existing one.
     while True:
         choice = input('Would you like to create a character or load?\n')
         choice = choice.lower()
-
         # CREATE
         if choice == 'create':
             name = input('What is your name?\n')
             player = Player(items.shortSword, 'human', 'knight', name)
             break
-
         # LOAD
         elif choice == 'load':
-
-            # check if save file exists. If not, prompt to create new character
-            isSaveFile = True
-            try:
-                iFile = open('savePlayer.pickle', 'rb')
-            except IOError:
-                print('\nNo save file to load\n')
-                isSaveFile = False
-            finally:
-                if isSaveFile:
-                    player = pickle.load(iFile)
-                    iFile.close()
-                    break
-
+            player = loadPlayer()
+            break
         # INVALID INPUT
         else:
             pleaseEnter(['create', 'load'])
-
     return player
 
 
@@ -491,26 +496,15 @@ def libraryPrompt(player):
         # SAVE
         elif iString == 'save':
             print('You have decided to save.')
-            oFile = open('savePlayer.pickle', 'wb')
-            pickle.dump(player, oFile)
-            oFile.close()
+            savePlayer(player)
             print('\nSave successful!\n')
 
         # LOAD
         elif iString == 'load':
             print('You have decided to load.')
-            isSaveFile = True
-            try:
-                iFile = open('savePlayer.pickle', 'rb')
-            except IOError:
-                print('\nNo save file to load\n')
-                isSaveFile = False
-            finally:
-                if isSaveFile:
-                    player = pickle.load(iFile)
-                    iFile.close()
-                    print('\nLoad successful!\n')
-                    print('Welcome, ' + player.name)
+            player = loadPlayer()
+            print('\nLoad successful!\n')
+            print('Welcome, ' + player.name)
 
         # QUIT THE GAME
         elif iString == 'quit':
