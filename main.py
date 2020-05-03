@@ -1,17 +1,6 @@
 #!/usr/bin/python3
 # Above tells program where to find python3.
-'''
-Library
-    Done for now
-Navigation
-    Done for now
-Store
-    weapons, armor, recovery items
-Arena
-    Done for now
-Fountain
-    Done for now
-'''
+
 # IMPORTS
 import sys
 import pickle
@@ -85,6 +74,18 @@ class Player(Creature):     # Player class used for user character
         self.potion = items.potion
         self.numOfPot = 1
         self.gold = 0
+
+    def attack(self, target):
+            print(f'You attack the {target.name} ' +
+                  f'with your {self.weapon.name}.')
+            atkDmg = random.randint(0, self.damage)
+            # Player attacks enemy
+            if atkDmg > 0:  # 0 damage is treated as a miss
+                print(f'You hit the {target.name}. ' +
+                      f'The {target.name} loses {atkDmg} hp.')
+                target.hp -= atkDmg
+            else:
+                print(f'You miss the {target.name}.')
 
     def levelUp(self):
         return math.floor((self.level**1.5)*5)
@@ -238,6 +239,13 @@ def getPlayer():
     return player
 
 
+def getEnemy():
+    enemy = random.choice(enemies.enemyList)
+    enemy.hp = enemy.maxHp  # Enemy may have been damaged in previous battle
+    enemy.alive = True
+    return enemy
+
+
 # Navigation and location functions
 # Plaza - The central location from which the player can go to other areas.
 def plazaPrompt(player):
@@ -295,10 +303,7 @@ def arenaPrompt(player):
 
 def battle(player):
     clearScreen()
-    # reset state of enemy
-    enemy = random.choice(enemies.enemyList)
-    enemy.hp = enemy.maxHp
-    enemy.alive = True
+    enemy = getEnemy()
     print(f'{player.name} vs {enemy.name}!')
     battleRound = 1
 
@@ -314,16 +319,7 @@ def battle(player):
 
         # ATTACK
         if iString == 'attack':
-            print(f'You attack the {enemy.name} ' +
-                  f'with you {player.weapon.name}.')
-            atkDmg = random.randint(0, player.damage)
-            # Player attacks enemy
-            if atkDmg > 0:  # 0 damage is treated as a miss
-                print(f'You hit the {enemy.name}. ' +
-                      f'The {enemy.name} loses {atkDmg} hp.')
-                enemy.hp -= atkDmg
-            else:
-                print(f'You miss the {enemy.name}.')
+            player.attack(enemy)
 
         # HEAL
         elif iString == 'heal':
