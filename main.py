@@ -6,7 +6,6 @@ Library
 Navigation
     Done for now
 Store
-    currency exchange
     weapons, armor, recovery items
 Arena
     Done for now
@@ -179,10 +178,29 @@ def clearScreen():
     print('\n'*40)
 
 
+# Python doesn't allow function overloading. This is my work around
+def pleaseEnter(option):  # option must be a list object
+    numArgs = len(option)
+    if numArgs == 2:
+        print(f"Please enter '{option[0]}' or '{option[1]}'.\n")
+    elif numArgs == 3:
+        print(f"Please enter '{option[0]}', '{option[1]}', or " +
+              f"'{option[2]}'.\n")
+    elif numArgs == 4:
+        print(f"Please enter '{option[0]}', '{option[1]}', '{option[2]}', " +
+              f"or '{option[3]}'.\n")
+    else:
+        print(f'ERROR Edit pleaseEnter function to allow {numArgs} arguments')
+
+
+def pressEnter():
+    input('Press ENTER to continue.\n')
+
+
 def printTitle(titleString):
     clearScreen()
     print(titleString)
-    input('Press ENTER to continue\n'.center(76))
+    pressEnter()
 
 
 def getPlayer():
@@ -215,7 +233,7 @@ def getPlayer():
 
         # INVALID INPUT
         else:
-            print("Plese enter 'create' or 'load'")
+            pleaseEnter(['create', 'load'])
 
     return player
 
@@ -235,26 +253,24 @@ def plazaPrompt(player):
 
         # ARENA
         if iString == 'arena' or iString == 'west':
-            print('You go to the arena.')
             arenaPrompt(player)
             break
 
         # STORE
         elif iString == 'store' or iString == 'north':
-            print('You go to the store.')
             storePrompt(player)
             break
 
         # LIBRARY
         elif iString == 'library' or iString == 'east':
-            print('You go to the library')
             libraryPrompt(player)
             break
 
         # FOUNTAIN
         elif iString == 'fountain' or iString == 'south':
             fountainPrompt(player)
-            print("please enter 'arena', 'store', 'library', or 'fountain'")
+
+        pleaseEnter(['arena', 'store', 'library', 'fountain'])
 
 
 # Arena - The player can battle enemies here to gain experience
@@ -268,15 +284,13 @@ def arenaPrompt(player):
 
         # BATTLE
         if iString == 'battle':
-            print('You have decided to battle.')
             battle(player)
 
         # GO TO PLAZA
         elif iString == 'exit' or iString == 'plaza':
-            print('You have decided to go to exit to the plaza.')
             plazaPrompt(player)
             break
-        print("\nPlease enter 'battle' or 'exit'\n")
+        pleaseEnter(['battle', 'exit'])
 
 
 def battle(player):
@@ -333,15 +347,15 @@ def battle(player):
                     oldExp = player.experience
                     player.experience -= LOSE_EXP_SURRENDER
                     print(f'\nYour experience points went from {oldExp} to ' +
-                          f'{player.experience}.')
-                    input('\nPress ENTER to continue\n')
+                          f'{player.experience}.\n')
+                    pressEnter()
                     arenaPrompt(player)
                 elif choice == 'no':
                     clearScreen()
                     break
                 else:
                     clearScreen()
-                    print('\nPlease enter YES or NO\n')
+                    pleaseEnter(['yes', 'no'])
                     continue
             continue
         else:
@@ -375,7 +389,7 @@ def battle(player):
             player.gold += gainGold
             print(f'\nYou gain {enemy.grantExp} experience.')
             print(f'You found {gainGold} pieces of gold.\n')
-            input('Press ENTER to continue\n')
+            pressEnter()
 
         battleRound += 1    # increment round number
     # END WHILE
@@ -402,7 +416,7 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
 
             if player.numOfPot >= MAX_POT:
                 print("You can't carry any more potions!\n")
-                input('Press ENTER to continue.\n')
+                pressEnter()
                 storePrompt(player)
 
             buyInput = input('How many potions would you like?\n')
@@ -420,17 +434,17 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
                         player.gold -= totalCost
                         player.numOfPot += quantity
                         print('\nHere you go!\n')
-                        input('Press ENTER to continue.\n')
+                        pressEnter()
                         storePrompt(player)
 
                     else:
                         print('you cannot hold that many!\n')
-                        input('Press ENTER to continue.\n')
+                        pressEnter()
                         storePrompt(player)
 
                 else:
                     print('you cannot afford that many!\n')
-                    input('Press ENTER to continue.\n')
+                    pressEnter()
                     storePrompt(player)
 
         # SELL
@@ -438,19 +452,19 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
             clearScreen()
             print('\nYou decide to sell.')
             notAvailable()      # Needs development
-            input('\npress ENTER to continue\n')
+            input('\n')
+            pressEnter()
             storePrompt(player)
             break
 
         # GO TO PLAZA
         elif iString == 'exit' or iString == 'plaza':
-            print('You have decided to exit to the plaza.')
             plazaPrompt(player)
             break
 
         # INVALID INPUT
         else:
-            print("\nPlease enter 'buy', 'sell', or 'exit'.\n")
+            pleaseEnter(['buy', 'sell', 'exit'])
 
 
 # Library - Save or load character data and quit game. A utility area.
@@ -475,7 +489,7 @@ def libraryPrompt(player):
                 levelUp(player)
             else:
                 print("You don't have enough experience yet.\n")
-                input('press ENTER to continue\n')
+                pressEnter()
                 libraryPrompt(player)
 
         # SAVE
@@ -509,13 +523,12 @@ def libraryPrompt(player):
 
         # GO TO THE PLAZA
         elif iString == 'exit' or iString == 'plaza':
-            print('You have decided to exit to the plaza.')
             plazaPrompt(player)
             break
 
         # INVALID INPUT
         else:
-            print("please enter 'save', 'load', 'quit', or 'exit'.")
+            pleaseEnter(['save', 'load', 'quit', 'exit'])
 
 
 def levelUp(player):
@@ -531,8 +544,8 @@ def levelUp(player):
             player.experience -= player.levelUp()
             player.level += 1
             print(f'\nYour maximum HP went from {oldHp} to {player.maxHp}.')
-            print(f'You are now level {player.level}!')
-            input('\nPress ENTER to continue.\n')
+            print(f'You are now level {player.level}!\n')
+            pressEnter()
             break
         if iString == 'strength':
             oldStr = player.strength
@@ -541,15 +554,15 @@ def levelUp(player):
             player.hp = player.maxHp
             player.level += 1
             print(f'\nYour strength went from {oldStr} to {player.strength}.')
-            print(f'You are now level {player.level}!')
-            input('\nPress ENTER to continue.\n')
+            print(f'You are now level {player.level}!\n')
+            pressEnter()
             break
         elif iString == 'cancel':
-            print('\nLevel up canceled.')
-            input('\nPress ENTER to continue.\n')
+            print('\nLevel up canceled.\n')
+            pressEnter()
             break
         else:
-            print("Please enter 'hp' or 'cancel'.")
+            pleaseEnter(['hp', 'cancel'])
 
     libraryPrompt(player)
 
@@ -576,8 +589,8 @@ def fountainPrompt(player):     # Examine player character information
             print(f'You have {player.hp} of {player.maxHp} HP.')
             print(f'You have {player.strength} strength.')
             print(f'You are carrying {player.numOfPot} potions.')
-            print(f'You have {player.gold} pieces of gold.')
-            input('\npress ENTER to continue\n')
+            print(f'You have {player.gold} pieces of gold.\n')
+            pressEnter()
             fountainPrompt(player)
             break
 
@@ -586,20 +599,19 @@ def fountainPrompt(player):     # Examine player character information
             clearScreen()
             print('\nYou drink from the fountain.')
             player.hp = player.maxHp
-            print('Your HP is restored.')
-            input('\npress ENTER to continue\n')
+            print('Your HP is restored.\n')
+            pressEnter()
             fountainPrompt(player)
             break
 
         # GO TO PLAZA
         elif iString == 'exit' or iString == 'plaza':
-            print('You have decided to go to exit to the plaza.')
             plazaPrompt(player)
             break
 
         # INVALID INPUT
         else:
-            print("\nPlease enter 'look', 'drink', or 'exit'")
+            pleaseEnter(['look', 'drink', 'exit'])
 
 
 main()
