@@ -8,6 +8,8 @@ import items
 import enemies
 import math
 import random
+import locations
+import PLAYER
 
 # CONSTANTS
 INC_HP_AMT = 5
@@ -36,65 +38,6 @@ TITLE_STRING = """
     ########     ####    #### #######   #######  ########## #########
 """
 
-
-###############################################################################
-# CLASS DEFINITIONS                                                           #
-###############################################################################
-# Creature (parent)                                                           #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# Player (child)                                                              #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# Enemy (child)                                                               #
-#                                                                             #
-###############################################################################
-
-class Creature:
-    def __init__(self, weapon, race, job):
-        self.weapon = weapon    # Player weapon is a class object
-        self.race = race        # String
-        self.job = job          # String
-        self.alive = True
-
-
-class Player(Creature):     # Player class used for user character
-    def __init__(self, weapon, race, job, name):
-        super().__init__(weapon, race, job)
-        self.name = name        # Player name. String created from user input
-        self.hp = 10            # Current health points
-        self.maxHp = 10         # Maximum health points
-        self.strength = 1       # Increases damage dealt to enemy
-        self.endurance = 1
-        self.agility = 1
-        self.dexterity = 1
-        self.damage = self.strength + self.weapon.damage
-        self.experience = 0     # Current experience points
-        self.level = 1          # Current player level
-        self.potion = items.potion
-        self.numOfPot = 1
-        self.gold = 0
-
-    def attack(self, target):
-            print(f'You attack the {target.name} ' +
-                  f'with your {self.weapon.name}.')
-            atkDmg = random.randint(0, self.damage)
-            # Player attacks enemy
-            if atkDmg > 0:  # 0 damage is treated as a miss
-                print(f'You hit the {target.name}. ' +
-                      f'The {target.name} loses {atkDmg} hp.')
-                target.hp -= atkDmg
-            else:
-                print(f'You miss the {target.name}.')
-
-    def levelUp(self):
-        return math.floor((self.level**1.5)*5)
-
-
-class Enemy(Creature):  # Create complex enemies. (Not in use)
-    def __init__(self, weapon, race, job):
-        super().__init__(weapon, race, job)
-        pass
 
 ###############################################################################
 # FUNCTION DEFINITIONS                                                        #
@@ -166,7 +109,8 @@ class Enemy(Creature):  # Create complex enemies. (Not in use)
 def main():
     printTitle(TITLE_STRING)
     player = getPlayer()
-    plazaPrompt(player)
+#    plazaPrompt(player)
+    player.query()
 
 
 # Place holder for undeveloped features
@@ -230,7 +174,7 @@ def getPlayer():
         choice = choice.lower()
         if choice == 'create':
             name = input('What is your name?\n')
-            player = Player(items.shortSword, 'human', 'knight', name)
+            player = PLAYER.Player(items.shortSword, 'human', 'knight', name, locations.plaza)
             break
         elif choice == 'load':
             player = loadPlayer()
@@ -279,8 +223,7 @@ def arenaPrompt(player):
     print('You are in the arena.\n')
     print('You can BATTLE or EXIT to the plaza.\n')
     while True:     # Input checking
-        iString = input('What would you like to do?\n')
-        iString = iString.lower()
+        iString = whatToDo()
         if iString == 'battle':
             battle(player)
         elif iString == 'exit' or iString == 'plaza':
@@ -288,6 +231,9 @@ def arenaPrompt(player):
             break
         pleaseEnter(['battle', 'exit'])
 
+def whatToDo():
+    iString = input('What would you like to do?\n')
+    return iString.lower()
 
 def battle(player):
     clearScreen()
@@ -301,8 +247,7 @@ def battle(player):
         print(f'\nRemaining player health: {player.hp}/{player.maxHp}')
         print(f'Remaining enemy health: {enemy.hp}/{enemy.maxHp}')
         print('\nYou can ATTACK, HEAL, or SURRENDER.\n')
-        iString = input('What would you like to do?\n')
-        iString = iString.lower()
+        iString = whatToDo()
         clearScreen()
 
         # ATTACK
@@ -347,15 +292,7 @@ def battle(player):
 
         # IF enemy alive, enemy attacks player
         if enemy.hp > 0:
-            print(f'The {enemy.name} attacks you with its {enemy.weapon}.')
-            atkDmg = random.randint(0, enemy.damage)
-
-            # Enemy attacks player
-            if atkDmg > 0:
-                print(f'The {enemy.name} hits you. You lose {atkDmg} hp.')
-                player.hp -= atkDmg
-            else:
-                print(f'The {enemy.name} misses you.')
+            enemy.attack(player)
 
             # Game ends if player reaches 0 HP
             if player.hp <= 0:
@@ -386,8 +323,7 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
     print('You can BUY, SELL, or EXIT to the plaza\n')
 
     while True:     # Input checking
-        iString = input('What would you like to do?\n')
-        iString = iString.lower()
+        iString = whatToDo()
 
         # BUY
         if iString == 'buy':
@@ -450,8 +386,7 @@ def libraryPrompt(player):
     print('You can SAVE or LOAD a character.')
     print('You can QUIT the game, or EXIT to the plaza\n')
     while True:     # Input checking
-        iString = input('What would you like to do?\n')
-        iString = iString.lower()
+        iString = whatToDo()
         if iString == 'study':
             clearScreen()
             print('You decide to study\n')
@@ -486,8 +421,7 @@ def levelUp(player):
     print(f'You can increase your HP by {INC_HP_AMT}, your STRENGTH by ' +
           f'{INC_STR_AMT}, or you can CANCEL.\n')
     while True:
-        iString = input('What would you like to do?\n')
-        iString = iString.lower()
+        iString = whatToDo()
         if iString == 'hp':
             oldHp = player.maxHp
             player.maxHp += INC_HP_AMT
@@ -514,7 +448,6 @@ def levelUp(player):
             break
         else:
             pleaseEnter(['hp', 'cancel'])
-
     libraryPrompt(player)
 
 
@@ -525,8 +458,7 @@ def fountainPrompt(player):     # Examine player character information
     print('you can DRINK from the fountain,')
     print('you can EXIT to the plaza.\n')
     while True:     # Input checking
-        iString = input('What would you like to do?\n')
-        iString = iString.lower()
+        iString = whatToDo()
         if iString == 'look':
             clearScreen()
             print('\n')

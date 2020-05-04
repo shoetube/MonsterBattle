@@ -1,13 +1,6 @@
-#!/usr/bin/python3
-
-
 # player.query() only runs after title screen and character creation or load
 
 import sys
-
-
-def clearScreen():
-    print('\n'*40)
 
 
 class Location:
@@ -99,6 +92,10 @@ class Arena(Location):
         super().__init__(name, north, east, south, west)
 
 
+def clearScreen():
+    print('\n'*40)
+
+
 plaza = Plaza(name='plaza')
 store = Store(name='store', south=plaza)
 arena = Arena(name='arena', east=plaza)
@@ -108,37 +105,3 @@ plaza.north = store
 plaza.east = library
 plaza.south = fountain
 plaza.west = arena
-
-
-class Player:
-    def __init__(self, location):
-        self.location = location
-
-    def query(self):
-        self.location.welcome(self)
-        print("Enter 'help' for command descriptions")
-        while True:
-            iString = input('Enter command: ')
-            istring = iString.lower()
-            if iString == 'quit' or iString == 'q':
-                sys.exit()
-            elif iString == 'help' or iString == 'h':
-                self.help()
-            elif iString == 'location' or iString == 'l':
-                self.location.welcome(self)
-            else:
-                self.location.Navigation(self, iString)
-
-    def help(self):
-        print('''
-ANY TIME COMMANDS:
-(Q)uit     - Quits the game
-(H)elp     - reads this menu
-(L)ocation - Repeats player location''')
-
-        self.location.help(self)
-
-
-player = Player(plaza)
-
-player.query()

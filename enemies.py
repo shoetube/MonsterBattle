@@ -14,6 +14,15 @@ class enemy:
     def dropGold(self):
         return randint(0, self.goldSeed)
 
+    def attack(self, target):
+        print(f'The {self.name} attacks you with its {self.weapon}.')
+        atkDmg = randint(0, self.damage)
+        # Enemy attacks player
+        if atkDmg > 0:
+            print(f'The {self.name} hits you. You lose {atkDmg} hp.')
+            target.hp -= atkDmg
+        else:
+            print(f'The {self.name} misses you.')
 
 # PARAMETERS = name, weapon, damage, hp, granthp, goldSeed
 BLUE_SLIME = enemy('blue slime', 'sliminess', 2, 5, 1, 2)
