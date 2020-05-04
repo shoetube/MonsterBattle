@@ -225,20 +225,16 @@ def loadPlayer():
 
 
 def getPlayer():
-    # Prompts user to create a new character or load an existing one.
     while True:
         choice = input('Would you like to create a character or load?\n')
         choice = choice.lower()
-        # CREATE
         if choice == 'create':
             name = input('What is your name?\n')
             player = Player(items.shortSword, 'human', 'knight', name)
             break
-        # LOAD
         elif choice == 'load':
             player = loadPlayer()
             break
-        # INVALID INPUT
         else:
             pleaseEnter(['create', 'load'])
     return player
@@ -263,26 +259,17 @@ def plazaPrompt(player):
     while True:     # Input checking
         iString = input('Where would you like to go?\n')
         iString = iString.lower()
-
-        # ARENA
         if iString == 'arena' or iString == 'west':
             arenaPrompt(player)
             break
-
-        # STORE
         elif iString == 'store' or iString == 'north':
             storePrompt(player)
             break
-
-        # LIBRARY
         elif iString == 'library' or iString == 'east':
             libraryPrompt(player)
             break
-
-        # FOUNTAIN
         elif iString == 'fountain' or iString == 'south':
             fountainPrompt(player)
-
         pleaseEnter(['arena', 'store', 'library', 'fountain'])
 
 
@@ -294,12 +281,8 @@ def arenaPrompt(player):
     while True:     # Input checking
         iString = input('What would you like to do?\n')
         iString = iString.lower()
-
-        # BATTLE
         if iString == 'battle':
             battle(player)
-
-        # GO TO PLAZA
         elif iString == 'exit' or iString == 'plaza':
             plazaPrompt(player)
             break
@@ -391,7 +374,6 @@ def battle(player):
             print(f'\nYou gain {enemy.grantExp} experience.')
             print(f'You found {gainGold} pieces of gold.\n')
             pressEnter()
-
         battleRound += 1    # increment round number
     # END WHILE
     arenaPrompt(player)
@@ -437,18 +419,14 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
                         print('\nHere you go!\n')
                         pressEnter()
                         storePrompt(player)
-
                     else:
                         print('you cannot hold that many!\n')
                         pressEnter()
                         storePrompt(player)
-
                 else:
                     print('you cannot afford that many!\n')
                     pressEnter()
                     storePrompt(player)
-
-        # SELL
         elif iString == 'sell':
             clearScreen()
             print('\nYou decide to sell.')
@@ -457,13 +435,9 @@ def storePrompt(player):    # Store - buy and sell weapons and recovery items
             pressEnter()
             storePrompt(player)
             break
-
-        # GO TO PLAZA
         elif iString == 'exit' or iString == 'plaza':
             plazaPrompt(player)
             break
-
-        # INVALID INPUT
         else:
             pleaseEnter(['buy', 'sell', 'exit'])
 
@@ -475,12 +449,9 @@ def libraryPrompt(player):
     print('You can STUDY to level up.')
     print('You can SAVE or LOAD a character.')
     print('You can QUIT the game, or EXIT to the plaza\n')
-
     while True:     # Input checking
         iString = input('What would you like to do?\n')
         iString = iString.lower()
-
-        # STUDY
         if iString == 'study':
             clearScreen()
             print('You decide to study\n')
@@ -492,31 +463,21 @@ def libraryPrompt(player):
                 print("You don't have enough experience yet.\n")
                 pressEnter()
                 libraryPrompt(player)
-
-        # SAVE
         elif iString == 'save':
             print('You have decided to save.')
             savePlayer(player)
             print('\nSave successful!\n')
-
-        # LOAD
         elif iString == 'load':
             print('You have decided to load.')
             player = loadPlayer()
             print('\nLoad successful!\n')
             print('Welcome, ' + player.name)
-
-        # QUIT THE GAME
         elif iString == 'quit':
             print('\nYou have decided to quit the game.')
             sys.exit()
-
-        # GO TO THE PLAZA
         elif iString == 'exit' or iString == 'plaza':
             plazaPrompt(player)
             break
-
-        # INVALID INPUT
         else:
             pleaseEnter(['save', 'load', 'quit', 'exit'])
 
@@ -566,8 +527,6 @@ def fountainPrompt(player):     # Examine player character information
     while True:     # Input checking
         iString = input('What would you like to do?\n')
         iString = iString.lower()
-
-        # LOOK at reflection
         if iString == 'look':
             clearScreen()
             print('\n')
@@ -583,8 +542,6 @@ def fountainPrompt(player):     # Examine player character information
             pressEnter()
             fountainPrompt(player)
             break
-
-        # DRINK from fountain
         elif iString == 'drink':
             clearScreen()
             print('\nYou drink from the fountain.')
@@ -593,13 +550,9 @@ def fountainPrompt(player):     # Examine player character information
             pressEnter()
             fountainPrompt(player)
             break
-
-        # GO TO PLAZA
         elif iString == 'exit' or iString == 'plaza':
             plazaPrompt(player)
             break
-
-        # INVALID INPUT
         else:
             pleaseEnter(['look', 'drink', 'exit'])
 
