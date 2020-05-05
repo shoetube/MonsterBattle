@@ -110,7 +110,7 @@ def main():
     printTitle(TITLE_STRING)
     player = getPlayer()
 #    plazaPrompt(player)
-    player.query()
+    player.queryMove()
 
 
 # Place holder for undeveloped features
@@ -132,10 +132,11 @@ def pleaseEnter(option):  # option must be a list object
         print(f"Please enter '{option[0]}', '{option[1]}', or " +
               f"'{option[2]}'.\n")
     elif numArgs == 4:
-        print(f"Please enter '{option[0]}', '{option[1]}', '{option[2]}', " +
-              f"or '{option[3]}'.\n")
+        print(f"Please enter '{option[0]}', '{option[1]}', " +
+              f"'{option[2]}', or '{option[3]}'.\n")
     else:
-        print(f'ERROR Edit pleaseEnter function to allow {numArgs} arguments')
+        print(f'ERROR Edit pleaseEnter function to allow {numArgs} ' +
+              f'arguments')
 
 
 def pressEnter():
@@ -174,7 +175,8 @@ def getPlayer():
         choice = choice.lower()
         if choice == 'create':
             name = input('What is your name?\n')
-            player = PLAYER.Player(items.shortSword, 'human', 'knight', name, locations.plaza)
+            player = PLAYER.Player(items.shortSword, 'human', 'knight',
+                                   name, locations.plaza)
             break
         elif choice == 'load':
             player = loadPlayer()
@@ -192,7 +194,6 @@ def getEnemy():
 
 
 # Navigation and location functions
-# Plaza - The central location from which the player can go to other areas.
 def plazaPrompt(player):
     clearScreen()
     print('You are standing in the plaza.\n')
@@ -267,16 +268,16 @@ def battle(player):
         # SURRENDER
         elif iString == 'surrender':
             LOSE_EXP_SURRENDER = player.experience // 3
-            print(f'If you surrender, you will lose {LOSE_EXP_SURRENDER} ' +
-                   'experience.\n')
+            print(f'If you surrender, you will lose ' +
+                  f'{LOSE_EXP_SURRENDER} experience.\n')
             while True:
                 choice = input('Are you sure that you want to surrender?\n')
                 choice = choice.lower()
                 if choice == 'yes':
                     oldExp = player.experience
                     player.experience -= LOSE_EXP_SURRENDER
-                    print(f'\nYour experience points went from {oldExp} to ' +
-                          f'{player.experience}.\n')
+                    print(f'\nYour experience points went from ' +
+                          f'{oldExp} to {player.experience}.\n')
                     pressEnter()
                     arenaPrompt(player)
                 elif choice == 'no':
@@ -315,8 +316,8 @@ def battle(player):
     # END WHILE
     arenaPrompt(player)
 
-
-def storePrompt(player):    # Store - buy and sell weapons and recovery items
+# Store - buy and sell weapons and recovery items
+def storePrompt(player):
     potionCost = 2
     clearScreen()
     print('You are in the store.\n')
@@ -418,8 +419,8 @@ def libraryPrompt(player):
 
 
 def levelUp(player):
-    print(f'You can increase your HP by {INC_HP_AMT}, your STRENGTH by ' +
-          f'{INC_STR_AMT}, or you can CANCEL.\n')
+    print(f'You can increase your HP by {INC_HP_AMT}, your STRENGTH ' +
+          f'by {INC_STR_AMT}, or you can CANCEL.\n')
     while True:
         iString = whatToDo()
         if iString == 'hp':

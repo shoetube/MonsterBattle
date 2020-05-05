@@ -14,7 +14,7 @@ class Creature:
 class Player(Creature):     # Player class used for user character
     def __init__(self, weapon, race, job, name, location):
         super().__init__(weapon, race, job)
-        self.name = name        # Player name. String created from user input
+        self.name = name        # Player name. String.
         self.location = location
         self.hp = 10            # Current health points
         self.maxHp = 10         # Maximum health points
@@ -44,28 +44,53 @@ class Player(Creature):     # Player class used for user character
     def levelUp(self):
         return math.floor((self.level**1.5)*5)
 
-    def query(self):
+    def queryMove(self):
         self.location.welcome(self)
-        print("Enter 'help' for command descriptions")
+        print("'MOVE' on")
         while True:
             iString = input('Enter command: ')
             istring = iString.lower()
             if iString == 'quit' or iString == 'q':
                 sys.exit()
             elif iString == 'help' or iString == 'h':
-                self.help()
+                self.helpMove()
             elif iString == 'location' or iString == 'l':
                 self.location.welcome(self)
+            elif iString == 'move' or iString == 'm':
+                print('Move: off')
+                self.queryContext()
             else:
-                self.location.Navigation(self, iString)
+                self.location.Move(self, iString)
 
-    def help(self):
+    def queryContext(self):
+        self.location.welcome(self)
+        print("'MOVE' off")
+        while True:
+            iString = input('Enter command: ')
+            istring = iString.lower()
+            if iString == 'help' or iString == 'h':
+                self.helpContext()
+            elif iString == 'move' or iString == 'm':
+                print('Move: on')
+                self.queryMove()
+            else:
+                self.location.context(self, iString)
+
+    def helpMove(self):
         print('''
-ANY TIME COMMANDS:
+UTILITY COMMANDS:
 (Q)uit     - Quits the game
 (H)elp     - reads this menu
-(L)ocation - Repeats player location''')
-        self.location.help(self)
+(L)ocation - Repeats player location
+(M)ove     - Toggles 'move' commands''')
+        self.location.helpMove()
+
+    def helpContext(self):
+        print('''
+UTILITY COMMANDS:
+(H)elp     - reads this menu
+(M)ove     - Toggles 'move' commands''')
+        self.location.help()
 
 
 class Enemy(Creature):  # Create complex enemies. (Not in use)
