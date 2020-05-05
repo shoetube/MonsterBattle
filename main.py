@@ -2,16 +2,16 @@
 # Above tells program where to find python3.
 
 # IMPORTS
-import items
-import enemies
-import locations
+import ITEMS
+import ENEMIES
+import LOCATIONS
 import PLAYER
-import functions
+import FUNCTIONS
 
 
 def main():
-    functions.printTitle(functions.TITLE_STRING)
-    player = functions.getPlayer()
+    FUNCTIONS.printTitle(FUNCTIONS.TITLE_STRING)
+    player = FUNCTIONS.getPlayer()
     player.queryMove()
 
 

@@ -1,7 +1,7 @@
 import random
 import math
 import sys
-import items
+import ITEMS
 
 class Creature:
     def __init__(self, weapon, race, job):
@@ -25,7 +25,7 @@ class Player(Creature):     # Player class used for user character
         self.damage = self.strength + self.weapon.damage
         self.experience = 0     # Current experience points
         self.level = 1          # Current player level
-        self.potion = items.potion
+        self.potion = ITEMS.potion
         self.numOfPot = 1
         self.gold = 0
 
@@ -82,14 +82,14 @@ UTILITY COMMANDS:
 (Q)uit     - Quits the game
 (H)elp     - reads this menu
 (L)ocation - Repeats player location
-(M)ove     - Toggles 'move' commands''')
+(M)ode     - Toggles 'move' commands''')
         self.location.helpMove()
 
     def helpContext(self):
         print('''
 UTILITY COMMANDS:
 (H)elp     - reads this menu
-(M)ove     - Toggles 'move' commands''')
+(M)ode     - Toggles 'move' commands''')
         self.location.help()
 
 
