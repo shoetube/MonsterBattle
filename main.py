@@ -2,195 +2,17 @@
 # Above tells program where to find python3.
 
 # IMPORTS
-import sys
-import pickle
 import items
 import enemies
-import math
-import random
 import locations
 import PLAYER
-
-# CONSTANTS
-INC_HP_AMT = 5
-INC_STR_AMT = 1
-MAX_POT = 3  # Maximum allowed potions in inventory
-TITLE_STRING = """
-
-###     ###    ###    ###   ####  ######  ######### ######### #########
-####   ####  ### ###  ####   ### ###   ## ######### ######### ##########
-########### ###   ### #####  ### ###    # #  ###  # ###     # ###    ###
-### ### ### ###   ### ###### ###  #####      ###    ####      ###    ###
-###  #  ### ###   ### ### ######   #####     ###    ######    ########
-###     ### ###   ### ###  ##### #    ###    ###    ####      ### ######
-###     ### ###   ### ###   #### ##   ###    ###    ###     # ###    ###
-####   ####  ### ###  ###    ###  ######    #####   ######### ###    ###
-##### #####    ###    ####   ###   ####    #######  ######### ###   #####
-
-    #########        ####    ######### ######### #####      #########
-    ###   ####      ######   ######### #########  ###       #########
-    ###     ###    ###  ###  #  ###  # #  ###  #  ###       ###     #
-    ###   ####    ###    ###    ###       ###     ###       ####
-    #######      ############   ###       ###     ###       ######
-    ###    ####  #####  #####   ###       ###     ###       ####
-    ###      ### ###      ###   ###       ###     ###     # ###     #
-    ###   #####  ###      ###  #####     #####    ####  ### #########
-    ########     ####    #### #######   #######  ########## #########
-"""
-
-
-###############################################################################
-# FUNCTION DEFINITIONS                                                        #
-###############################################################################
-# main                                                                        #
-#                                                                             #
-# Run main program                                                            #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# notAvailable                                                                #
-#                                                                             #
-# Error message for undeveloped sections of program                           #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# clearScreen                                                                 #
-#                                                                             #
-# Clear screen when entering new areas                                        #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# printTitle                                                                  #
-#                                                                             #
-# Print title screen                                                          #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# getPlayer                                                                   #
-#                                                                             #
-# Prompt player to create new character or load existing one                  #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# plazaPrompt                                                                 #
-#                                                                             #
-# Central location where player starts and passes through to reach other      #
-# locations. From here, the player can go to the arena, store, library or     #
-# to the fountain.                                                            #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# arenaPrompt                                                                 #
-#                                                                             #
-# Battle location. Accessed from the Plaza. Here the player can engage in     #
-# battles for experience and currency to purchase items and equipment         #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# battle                                                                      #
-#                                                                             #
-# Battle mode. Accessed through the arena. This is the main attraction of the #
-# game.                                                                       #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# storePrompt                                                                 #
-#                                                                             #
-# Store location. Accessed from the Plaza. Player can purchase items and      #
-# equipment with currency gained from battling in the arena.                  #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# libraryPrompt                                                               #
-#                                                                             #
-# Library location. Accessed from the Plaza. User can save or load a          #
-# character from here or quit the game.                                       #
-#                                                                             #
-# --------------------------------------------------------------------------- #
-# fountainPrompt                                                              #
-#                                                                             #
-# Fountain location. Accessed from the Plaza. User can check player           #
-# information by looking at reflection or heal by drinking the water.         #
-#                                                                             #
-###############################################################################
+import functions
 
 
 def main():
-    printTitle(TITLE_STRING)
-    player = getPlayer()
-#    plazaPrompt(player)
+    functions.printTitle(functions.TITLE_STRING)
+    player = functions.getPlayer()
     player.queryMove()
-
-
-# Place holder for undeveloped features
-def notAvailable():
-    print('\nThat feature is not available yet.\n')
-
-
-# Fills screen with blank lines
-def clearScreen():
-    print('\n'*40)
-
-
-# Python doesn't allow function overloading. This is my work around
-def pleaseEnter(option):  # option must be a list object
-    numArgs = len(option)
-    if numArgs == 2:
-        print(f"Please enter '{option[0]}' or '{option[1]}'.\n")
-    elif numArgs == 3:
-        print(f"Please enter '{option[0]}', '{option[1]}', or " +
-              f"'{option[2]}'.\n")
-    elif numArgs == 4:
-        print(f"Please enter '{option[0]}', '{option[1]}', " +
-              f"'{option[2]}', or '{option[3]}'.\n")
-    else:
-        print(f'ERROR Edit pleaseEnter function to allow {numArgs} ' +
-              f'arguments')
-
-
-def pressEnter():
-    input('Press ENTER to continue.\n')
-
-
-def printTitle(titleString):
-    clearScreen()
-    print(titleString)
-    pressEnter()
-
-
-def savePlayer(player):
-    oFile = open('savePlayer.pickle', 'wb')
-    pickle.dump(player, oFile)
-    oFile.close()
-
-
-def loadPlayer():
-    isSaveFile = True
-    try:
-        iFile = open('savePlayer.pickle', 'rb')
-    except IOError:
-        print('\nNo save file to load\n')
-        isSaveFile = False
-    finally:
-        if isSaveFile:
-            player = pickle.load(iFile)
-            iFile.close()
-            return player
-
-
-def getPlayer():
-    while True:
-        choice = input('Would you like to create a character or load?\n')
-        choice = choice.lower()
-        if choice == 'create':
-            name = input('What is your name?\n')
-            player = PLAYER.Player(items.shortSword, 'human', 'knight',
-                                   name, locations.plaza)
-            break
-        elif choice == 'load':
-            player = loadPlayer()
-            break
-        else:
-            pleaseEnter(['create', 'load'])
-    return player
-
-
-def getEnemy():
-    enemy = random.choice(enemies.enemyList)
-    enemy.hp = enemy.maxHp  # Enemy may have been damaged in previous battle
-    enemy.alive = True
-    return enemy
 
 
 # Navigation and location functions
@@ -232,9 +54,6 @@ def arenaPrompt(player):
             break
         pleaseEnter(['battle', 'exit'])
 
-def whatToDo():
-    iString = input('What would you like to do?\n')
-    return iString.lower()
 
 def battle(player):
     clearScreen()

@@ -2,7 +2,7 @@
 # or load
 
 import sys
-
+import functions
 
 class Location:
     def __init__(self, name='location', north=None,
@@ -15,7 +15,7 @@ class Location:
         self.name = name
 
     def welcome(self, player):
-        clearScreen()
+        functions.clearScreen()
         print(f'\nYou are at the {self.name}')
 
     def helpMove(self):
@@ -30,47 +30,35 @@ MOVE COMMANDS:
     def Move(self, player, iString):
 
         if iString == 'north' or iString == 'n':
-
             if self.north is not None:
                 print('Going north')
                 player.location = self.north
                 player.queryMove()
-
             else:
-                invalidDirection()
-
+                self.invalidDirection()
         elif iString == 'east' or iString == 'e':
-
             if self.east is not None:
                 print('Going east')
                 player.location = self.east
                 player.queryMove()
-
             else:
-                invalidDirection()
-
+                self.invalidDirection()
         elif iString == 'south' or iString == 's':
-
             if self.south is not None:
                 print('Going south')
                 player.location = self.south
                 player.queryMove()
-
             else:
-                invalidDirection()
-
+                self.invalidDirection()
         elif iString == 'west' or iString == 'w':
-
             if self.west is not None:
                 print('going west')
                 player.location = self.west
                 player.queryMove()
-
             else:
-                invalidDirection()
-
+                self.invalidDirection()
         else:
-            invalid()
+            self.invalid()
 
     def help(self):
         pass
@@ -79,18 +67,22 @@ MOVE COMMANDS:
         pass
 
     def invalidDirection(self):
-        clearScreen()
+        functions.clearScreen()
         print("\nCan't go that way.")
 
-
     def invalid(self):
-        clearScreen()
+        functions.clearScreen()
         print("INVALID COMMAND. Try entering 'help'.")
+
 
 class Plaza(Location):
     def __init__(self, name='location', north=None,
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
+
+    def context(self, player, iString):
+        print('Exp + 5!')
+        player.experience += 5
 
 
 class Store(Location):
@@ -109,6 +101,30 @@ class Library(Location):
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
 
+    def context(self, player, iString):
+        if iString == 'save':
+            print('You have decided to save.')
+            functions.savePlayer(player)
+            print('\nSave successful!\n')
+        elif iString == 'load':
+            print('You have decided to load.')
+            player = functions.loadPlayer()
+            print('\nLoad successful!\n')
+            print('Welcome, ' + player.name)
+        elif iString == 'study':
+            functions.clearScreen()
+            print(f'You currently have {player.experience} ' +
+                  f'experience.')
+            print(f'You need {player.levelUp()} experience to ' +
+                  f'level up.\n')
+            if player.experience >= player.levelUp():
+                functions.levelUp(player)
+            else:
+                print("You don't have enough experience yet.\n")
+                functions.pressEnter()
+        else:
+            self.invalid()
+
     def help(self):
         print('''
 LIBRARY COMMANDS:
@@ -124,7 +140,10 @@ class Fountain(Location):
 
     def context(self, player, iString):
         if iString == 'drink':
-            print('You entered drink.')
+            functions.clearScreen()
+            print('\nYou drink from the fountain.')
+            player.hp = player.maxHp
+            print('Your HP is restored.\n')
         else:
             self.invalid()
 
@@ -143,9 +162,6 @@ class Arena(Location):
         print('''
 ARENA COMMANDS:
 battle - Battle enemies to gain gold and experience.''')
-
-def clearScreen():
-    print('\n'*40)
 
 
 plaza = Plaza(name='plaza')
