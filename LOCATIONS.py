@@ -158,6 +158,12 @@ class Arena(Location):
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
 
+    def context(self, player, iString):
+        if iString == 'battle':
+            FUNCTIONS.battle(player)
+        else:
+            self.invalid()
+
     def help(self):
         print('''
 ARENA COMMANDS:

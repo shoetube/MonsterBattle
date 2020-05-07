@@ -59,6 +59,8 @@ class Player(Creature):     # Player class used for user character
             elif iString == 'move' or iString == 'm':
                 print('Move: off')
                 self.queryContext()
+            elif iString == 'check' or iString == 'c':
+                self.check()
             else:
                 self.location.Move(self, iString)
 
@@ -82,6 +84,7 @@ UTILITY COMMANDS:
 (Q)uit     - Quits the game
 (H)elp     - reads this menu
 (L)ocation - Repeats player location
+(C)heck    - check player stats
 (M)ode     - Toggles 'move' commands''')
         self.location.helpMove()
 
@@ -92,6 +95,20 @@ UTILITY COMMANDS:
 (M)ode     - Toggles 'move' commands''')
         self.location.help()
 
+    def check(self):
+        print(f'''
+Name:    {self.name}
+race:    {self.race}
+job:     {self.job}
+HP:      {self.hp}/{self.maxHp}
+str:     {self.strength}
+level:   {self.level}
+exp:     {self.experience}/{self.levelUp()}
+gold:    {self.gold}
+potions: {self.numOfPot}
+weapon:  {self.weapon.name}
+wpn dam: {self.weapon.damage}
+''')
 
 class Enemy(Creature):  # Create complex enemies. (Not in use)
     def __init__(self, weapon, race, job):
