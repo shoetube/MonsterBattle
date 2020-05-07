@@ -8,7 +8,7 @@ import FUNCTIONS
 def main():
     FUNCTIONS.printTitle(FUNCTIONS.TITLE_STRING)
     player = FUNCTIONS.getPlayer()
-    player.queryMove()
+    player.query()
 
 
 main()

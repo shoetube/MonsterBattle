@@ -1,4 +1,4 @@
-# player.queryMove() only runs after title screen and character creation
+# player.query() only runs after title screen and character creation
 # or load
 
 import sys
@@ -33,35 +33,35 @@ MOVE COMMANDS:
         if iString == 'north' or iString == 'n':
             if self.north is not None:
                 player.location = self.north
-                player.queryMove()
+                player.query()
             else:
                 self.invalidDirection()
         elif iString == 'east' or iString == 'e':
             if self.east is not None:
                 player.location = self.east
-                player.queryMove()
+                player.query()
             else:
                 self.invalidDirection()
         elif iString == 'south' or iString == 's':
             if self.south is not None:
                 player.location = self.south
-                player.queryMove()
+                player.query()
             else:
                 self.invalidDirection()
         elif iString == 'west' or iString == 'w':
             if self.west is not None:
                 player.location = self.west
-                player.queryMove()
+                player.query()
             else:
                 self.invalidDirection()
         else:
-            self.invalid()
+            self.context(player, iString)
 
     def help(self):
         pass
 
     def context(self, player, iString):
-        pass
+        self.invalid()
 
     def invalidDirection(self):
         FUNCTIONS.clearScreen()
@@ -76,10 +76,6 @@ class Plaza(Location):
     def __init__(self, name='location', north=None,
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
-
-    def context(self, player, iString):
-        print('Exp + 5!')
-        player.experience += 5
 
 
 class Store(Location):
@@ -109,11 +105,11 @@ class Library(Location):
 
     def context(self, player, iString):
         if iString == 'save':
-            print('You have decided to save.')
+            FUNCTIONS.clearScreen()
             FUNCTIONS.savePlayer(player)
             print('\nSave successful!\n')
         elif iString == 'load':
-            print('You have decided to load.')
+            FUNCTIONS.clearScreen()
             player = FUNCTIONS.loadPlayer()
             print('\nLoad successful!\n')
             print('Welcome, ' + player.name)
@@ -127,7 +123,8 @@ class Library(Location):
                 FUNCTIONS.levelUp(player)
             else:
                 print("You don't have enough experience yet.\n")
-                FUNCTIONS.pressEnter()
+#                FUNCTIONS.pressEnter()
+#                player.query()
         else:
             self.invalid()
 

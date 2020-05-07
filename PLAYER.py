@@ -1,6 +1,7 @@
 import random
 import math
 import sys
+import FUNCTIONS
 import ITEMS
 
 
@@ -45,41 +46,33 @@ class Player(Creature):     # Player class used for user character
     def levelUp(self):
         return math.floor((self.level**1.5)*5)
 
-    def queryMove(self):
+    def query(self):
         self.location.welcome(self)
-        print("'MOVE' on")
         while True:
             iString = input('Enter command: ')
             istring = iString.lower()
             if iString == 'quit' or iString == 'q':
-                sys.exit()
+                self.confirmQuit()
             elif iString == 'help' or iString == 'h':
                 self.helpMove()
             elif iString == 'location' or iString == 'l':
                 self.location.welcome(self)
-            elif iString == 'move' or iString == 'm':
-                print('Move: off')
-                self.queryContext()
             elif iString == 'check' or iString == 'c':
                 self.check()
             else:
                 self.location.Move(self, iString)
 
-    def queryContext(self):
-        self.location.welcome(self)
-        print("'MOVE' off")
-        while True:
-            iString = input('Enter command: ')
-            istring = iString.lower()
-            if iString == 'help' or iString == 'h':
-                self.helpContext()
-            elif iString == 'move' or iString == 'm':
-                print('Move: on')
-                self.queryMove()
-            else:
-                self.location.context(self, iString)
+    def confirmQuit(self):
+        FUNCTIONS.clearScreen()
+        s = input('Are you sure you want to quit?\n')
+        s = s.lower()
+        if s == 'yes' or s == 'y':
+            sys.exit()
+        else:
+            self.query()
 
     def helpMove(self):
+        FUNCTIONS.clearScreen()
         print('''
 UTILITY COMMANDS:
 (Q)uit     - Quits the game
@@ -88,15 +81,10 @@ UTILITY COMMANDS:
 (C)heck    - check player stats
 (M)ode     - Toggles 'move' commands''')
         self.location.helpMove()
-
-    def helpContext(self):
-        print('''
-UTILITY COMMANDS:
-(H)elp     - reads this menu
-(M)ode     - Toggles 'move' commands''')
         self.location.help()
 
     def check(self):
+        print('\n'*40)
         print(f'''
 Name:    {self.name}
 race:    {self.race}

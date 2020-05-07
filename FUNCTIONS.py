@@ -145,7 +145,7 @@ def getPlayer():
         choice = input('Would you like to create a character or load?\n')
         choice = choice.lower()
         if choice == 'create':
-            name = input('What is your name?\n')
+            name = input('\nWhat is your name?\n')
             player = PLAYER.Player(ITEMS.shortSword, 'human', 'knight',
                                    name, LOCATIONS.plaza)
             break
@@ -200,7 +200,7 @@ def battle(player):
                     print(f'\nYour experience points went from ' +
                           f'{oldExp} to {player.experience}.\n')
                     pressEnter()
-                    player.queryContext()
+                    player.query()
                 elif choice == 'no':
                     clearScreen()
                     break
@@ -235,14 +235,13 @@ def battle(player):
             pressEnter()
         battleRound += 1    # increment round number
     # END WHILE
-    player.queryContext()
+    player.query()
 # End function
 
 
 def buy(player):
     potionCost = 2
     clearScreen()
-    print('\nYou decide to buy.\n')
     print(f'You can buy potions for {potionCost} gold each\n')
     print(f'You currently have {player.numOfPot} potions.')
     print(f'You can have up to {MAX_POT} in your inventory\n')
@@ -250,7 +249,7 @@ def buy(player):
     if player.numOfPot >= MAX_POT:
         print("You can't carry any more potions!\n")
         pressEnter()
-        player.queryContext() 
+        player.query()
     buyInput = input('How many potions would you like?\n')
 
     # How many potions does the player want?
@@ -267,19 +266,17 @@ def buy(player):
                 player.numOfPot += quantity
                 print('\nHere you go!\n')
                 pressEnter()
-#                player.queryContext()
             else:
                 print('you cannot hold that many!\n')
                 pressEnter()
-#                player.queryContext()
         else:
             print('you cannot afford that many!\n')
             pressEnter()
-    player.queryContext()
+    player.query()
 
 
 def sell(player):
     clearScreen()
     print('\nYou decide to sell.')
     notAvailable()      # Needs development
-    player.queryContext()
+    player.query()
