@@ -235,65 +235,51 @@ def battle(player):
             pressEnter()
         battleRound += 1    # increment round number
     # END WHILE
+    player.queryContext()
+# End function
 
-# Store - buy and sell weapons and recovery items
-def storePrompt(player):
+
+def buy(player):
     potionCost = 2
     clearScreen()
-    print('You are in the store.\n')
-    print('You can BUY, SELL, or EXIT to the plaza\n')
+    print('\nYou decide to buy.\n')
+    print(f'You can buy potions for {potionCost} gold each\n')
+    print(f'You currently have {player.numOfPot} potions.')
+    print(f'You can have up to {MAX_POT} in your inventory\n')
 
-    while True:     # Input checking
-        iString = whatToDo()
+    if player.numOfPot >= MAX_POT:
+        print("You can't carry any more potions!\n")
+        pressEnter()
+        player.queryContext() 
+    buyInput = input('How many potions would you like?\n')
 
-        # BUY
-        if iString == 'buy':
-            clearScreen()
-            print('\nYou decide to buy.\n')
-            print(f'You can buy potions for {potionCost} gold each\n')
-            print(f'You currently have {player.numOfPot} potions.')
-            print(f'You can have up to {MAX_POT} in your inventory\n')
+    # How many potions does the player want?
+    if buyInput.isdigit():
+        quantity = int(buyInput)
+        totalCost = quantity * potionCost
 
-            if player.numOfPot >= MAX_POT:
-                print("You can't carry any more potions!\n")
+        # If player can afford that many
+        if player.gold >= totalCost:
+
+            # If player can hold that many
+            if player.numOfPot + quantity <= MAX_POT:
+                player.gold -= totalCost
+                player.numOfPot += quantity
+                print('\nHere you go!\n')
                 pressEnter()
-                storePrompt(player)
-
-            buyInput = input('How many potions would you like?\n')
-
-            # How many potions does the player want?
-            if buyInput.isdigit():
-                quantity = int(buyInput)
-                totalCost = quantity * potionCost
-
-                # If player can afford that many
-                if player.gold >= totalCost:
-
-                    # If player can hold that many
-                    if player.numOfPot + quantity <= MAX_POT:
-                        player.gold -= totalCost
-                        player.numOfPot += quantity
-                        print('\nHere you go!\n')
-                        pressEnter()
-                        storePrompt(player)
-                    else:
-                        print('you cannot hold that many!\n')
-                        pressEnter()
-                        storePrompt(player)
-                else:
-                    print('you cannot afford that many!\n')
-                    pressEnter()
-                    storePrompt(player)
-        elif iString == 'sell':
-            clearScreen()
-            print('\nYou decide to sell.')
-            notAvailable()      # Needs development
-            input('\n')
-            pressEnter()
-            storePrompt(player)
-            break
-        elif iString == 'exit' or iString == 'plaza':
-            plazaPrompt(player)
-            break
+#                player.queryContext()
+            else:
+                print('you cannot hold that many!\n')
+                pressEnter()
+#                player.queryContext()
         else:
-            pleaseEnter(['buy', 'sell', 'exit'])
+            print('you cannot afford that many!\n')
+            pressEnter()
+    player.queryContext()
+
+
+def sell(player):
+    clearScreen()
+    print('\nYou decide to sell.')
+    notAvailable()      # Needs development
+    player.queryContext()

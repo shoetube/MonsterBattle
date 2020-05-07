@@ -3,6 +3,7 @@ import math
 import sys
 import ITEMS
 
+
 class Creature:
     def __init__(self, weapon, race, job):
         self.weapon = weapon    # Player weapon is a class object
@@ -30,16 +31,16 @@ class Player(Creature):     # Player class used for user character
         self.gold = 0
 
     def attack(self, target):
-            print(f'You attack the {target.name} ' +
-                  f'with your {self.weapon.name}.')
-            atkDmg = random.randint(0, self.damage)
-            # Player attacks enemy
-            if atkDmg > 0:  # 0 damage is treated as a miss
-                print(f'You hit the {target.name}. ' +
-                      f'The {target.name} loses {atkDmg} hp.')
-                target.hp -= atkDmg
-            else:
-                print(f'You miss the {target.name}.')
+        print(f'You attack the {target.name} ' +
+              f'with your {self.weapon.name}.')
+        atkDmg = random.randint(0, self.damage)
+        # Player attacks enemy
+        if atkDmg > 0:  # 0 damage is treated as a miss
+            print(f'You hit the {target.name}. ' +
+                  f'The {target.name} loses {atkDmg} hp.')
+            target.hp -= atkDmg
+        else:
+            print(f'You miss the {target.name}.')
 
     def levelUp(self):
         return math.floor((self.level**1.5)*5)
@@ -109,6 +110,7 @@ potions: {self.numOfPot}
 weapon:  {self.weapon.name}
 wpn dam: {self.weapon.damage}
 ''')
+
 
 class Enemy(Creature):  # Create complex enemies. (Not in use)
     def __init__(self, weapon, race, job):

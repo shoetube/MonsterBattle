@@ -4,6 +4,7 @@
 import sys
 import FUNCTIONS
 
+
 class Location:
     def __init__(self, name='location', north=None,
                  east=None,
@@ -31,28 +32,24 @@ MOVE COMMANDS:
 
         if iString == 'north' or iString == 'n':
             if self.north is not None:
-                print('Going north')
                 player.location = self.north
                 player.queryMove()
             else:
                 self.invalidDirection()
         elif iString == 'east' or iString == 'e':
             if self.east is not None:
-                print('Going east')
                 player.location = self.east
                 player.queryMove()
             else:
                 self.invalidDirection()
         elif iString == 'south' or iString == 's':
             if self.south is not None:
-                print('Going south')
                 player.location = self.south
                 player.queryMove()
             else:
                 self.invalidDirection()
         elif iString == 'west' or iString == 'w':
             if self.west is not None:
-                print('going west')
                 player.location = self.west
                 player.queryMove()
             else:
@@ -90,11 +87,20 @@ class Store(Location):
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
 
+    def context(self, player, iString):
+        if iString == 'buy':
+            FUNCTIONS.buy(player)
+        elif iString == 'sell':
+            FUNCTIONS.sell(player)
+        else:
+            self.invalid()
+
     def help(self):
         print('''
 STORE COMMANDS:
 buy  - Purchase items from the store.
 sell - Exchange unwanted items for gold.''')
+
 
 class Library(Location):
     def __init__(self, name='location', north=None,

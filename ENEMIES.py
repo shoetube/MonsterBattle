@@ -1,5 +1,7 @@
 from random import randint
 from random import choice
+
+
 class enemy:
     def __init__(self, name, weapon, damage, hp, grantExp, goldSeed):
         self.name = name
@@ -24,6 +26,7 @@ class enemy:
         else:
             print(f'The {self.name} misses you.')
 
+
 # PARAMETERS = name, weapon, damage, hp, granthp, goldSeed
 BLUE_SLIME = enemy('blue slime', 'sliminess', 2, 5, 1, 2)
 SMALL_RAT = enemy('small rat', 'bite', 2, 3, 1, 1)
@@ -36,5 +39,3 @@ enemyList = [
     SKELETAL_HAND,
     RED_SLIME,
 ]
-
-

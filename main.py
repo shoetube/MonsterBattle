@@ -2,10 +2,6 @@
 # Above tells program where to find python3.
 
 # IMPORTS
-import ITEMS
-import ENEMIES
-import LOCATIONS
-import PLAYER
 import FUNCTIONS
 
 
