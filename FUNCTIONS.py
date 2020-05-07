@@ -168,16 +168,16 @@ def battle(player):
         print(f'\nRound {battleRound}')
         print(f'\nRemaining player health: {player.hp}/{player.maxHp}')
         print(f'Remaining enemy health: {enemy.hp}/{enemy.maxHp}')
-        print('\nYou can ATTACK, HEAL, or SURRENDER.\n')
+        print('\nYou can (A)ttack, (H)eal, or (S)urrender.\n')
         iString = whatToDo()
         clearScreen()
 
         # ATTACK
-        if iString == 'attack':
+        if iString == 'attack' or iString == 'a':
             player.attack(enemy)
 
         # HEAL
-        elif iString == 'heal':
+        elif iString == 'heal' or iString == 'h':
             # If player has no potions, continue to beginning of loop
             if player.numOfPot < 1:
                 print("You don't have any potions left")
@@ -187,21 +187,22 @@ def battle(player):
                 print(f'You have {player.numOfPot} potions left')
 
         # SURRENDER
-        elif iString == 'surrender':
+        elif iString == 'surrender' or iString == 's':
             LOSE_EXP_SURRENDER = player.experience // 3
             print(f'If you surrender, you will lose ' +
                   f'{LOSE_EXP_SURRENDER} experience.\n')
             while True:
                 choice = input('Are you sure that you want to surrender?\n')
                 choice = choice.lower()
-                if choice == 'yes':
+                if choice == 'yes' or choice == 'y':
+                    clearScreen()
                     oldExp = player.experience
                     player.experience -= LOSE_EXP_SURRENDER
                     print(f'\nYour experience points went from ' +
                           f'{oldExp} to {player.experience}.\n')
                     pressEnter()
                     player.query()
-                elif choice == 'no':
+                elif choice == 'no' or choice == 'n':
                     clearScreen()
                     break
                 else:
@@ -232,19 +233,20 @@ def battle(player):
             player.gold += gainGold
             print(f'\nYou gain {enemy.grantExp} experience.')
             print(f'You found {gainGold} pieces of gold.\n')
-            pressEnter()
+#            pressEnter()
         battleRound += 1    # increment round number
     # END WHILE
-    player.query()
+#    player.query()
 # End function
 
 
 def buy(player):
     potionCost = 2
     clearScreen()
-    print(f'You can buy potions for {potionCost} gold each\n')
+    print(f'You can buy potions for {potionCost} gold each.')
+    print(f'You currently have {player.gold} gold.\n')
     print(f'You currently have {player.numOfPot} potions.')
-    print(f'You can have up to {MAX_POT} in your inventory\n')
+    print(f'You can have up to {MAX_POT} in your inventory.\n')
 
     if player.numOfPot >= MAX_POT:
         print("You can't carry any more potions!\n")
@@ -265,18 +267,15 @@ def buy(player):
                 player.gold -= totalCost
                 player.numOfPot += quantity
                 print('\nHere you go!\n')
-                pressEnter()
             else:
                 print('you cannot hold that many!\n')
-                pressEnter()
         else:
             print('you cannot afford that many!\n')
-            pressEnter()
-    player.query()
+    else:
+        clearScreen()
+        print('No.\n')
 
 
 def sell(player):
     clearScreen()
-    print('\nYou decide to sell.')
     notAvailable()      # Needs development
-    player.query()
