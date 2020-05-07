@@ -233,10 +233,8 @@ def battle(player):
             player.gold += gainGold
             print(f'\nYou gain {enemy.grantExp} experience.')
             print(f'You found {gainGold} pieces of gold.\n')
-#            pressEnter()
         battleRound += 1    # increment round number
     # END WHILE
-#    player.query()
 # End function
 
 
