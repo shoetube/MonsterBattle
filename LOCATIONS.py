@@ -17,7 +17,19 @@ class Location:
 
     def welcome(self, player):
         FUNCTIONS.clearScreen()
-        print(f'\nYou are at the {self.name}')
+        if self.north is not None:
+            print(f'To the north is the {self.north.name}.')
+        if self.east is not None:
+            print(f'To the east is the {self.east.name}.')
+        if self.south is not None:
+            print(f'To the south is the {self.south.name}.')
+        if self.west is not None:
+            print(f'To the west is the {self.west.name}.')
+        print(f'\nYou are at the {self.name}\n')
+        self.options()
+
+    def options(self):
+        pass
 
     def helpMove(self):
         print('''
@@ -25,8 +37,7 @@ MOVE COMMANDS:
 (N)orth - Moves player to the north.
 (E)ast  - Moves player to the east.
 (S)outh - Moves player to the south.
-(W)est  - Moves player to the west.
-(M)ove  - Toggle move''')
+(W)est  - Moves player to the west.''')
 
     def Move(self, player, iString):
 
@@ -83,6 +94,9 @@ class Store(Location):
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
 
+    def options(self):
+        (print(f'Here you can buy or sell.\n'))
+
     def context(self, player, iString):
         if iString == 'buy':
             FUNCTIONS.buy(player)
@@ -102,6 +116,10 @@ class Library(Location):
     def __init__(self, name='location', north=None,
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
+
+    def options(self):
+        (print(f'Here you can save, load, or study.\n'))
+
 
     def context(self, player, iString):
         if iString == 'save':
@@ -141,6 +159,9 @@ class Fountain(Location):
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
 
+    def options(self):
+        (print(f'Here you can drink.\n'))
+
     def context(self, player, iString):
         if iString == 'drink':
             FUNCTIONS.clearScreen()
@@ -160,6 +181,9 @@ class Arena(Location):
     def __init__(self, name='location', north=None,
                  east=None, south=None, west=None):
         super().__init__(name, north, east, south, west)
+
+    def options(self):
+        (print(f'Here you can battle.\n'))
 
     def context(self, player, iString):
         if iString == 'battle':

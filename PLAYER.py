@@ -78,8 +78,7 @@ UTILITY COMMANDS:
 (Q)uit     - Quits the game
 (H)elp     - reads this menu
 (L)ocation - Repeats player location
-(C)heck    - check player stats
-(M)ode     - Toggles 'move' commands''')
+(C)heck    - check player stats''')
         self.location.helpMove()
         self.location.help()
 

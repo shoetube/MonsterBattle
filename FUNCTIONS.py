@@ -74,6 +74,7 @@ def levelUp(player):
 
 
 def incStr(player):
+    clearScreen()
     oldStr = player.strength
     player.strength += INC_STR_AMT
     player.experience -= player.levelUp()
@@ -85,6 +86,7 @@ def incStr(player):
 
 
 def incHp(player):
+    clearScreen()
     oldHp = player.maxHp
     player.maxHp += INC_HP_AMT
     player.hp = player.maxHp
