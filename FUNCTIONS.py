@@ -5,6 +5,7 @@ import ITEMS
 import pickle
 import math
 import random
+import sys
 
 # CONSTANTS
 SCREEN_CLEAR = 40
@@ -61,10 +62,13 @@ def levelUp(player):
     while True:
         iString = whatToDo()
         if iString == 'hp':
-            incHp(player)
+            player.maxHp = incStat(player, player.maxHp,
+                                   INC_HP_AMT, 'maximum HP')
+            player.hp = player.maxHp
             break
         if iString == 'strength':
-            incStr(player)
+            player.strength = incStat(player, player.strength,
+                                      INC_STR_AMT, 'strength')
             break
         elif iString == 'cancel':
             print('\nLevel up canceled.\n')
@@ -73,28 +77,17 @@ def levelUp(player):
             pleaseEnter(['hp', 'strength', 'cancel'])
 
 
-def incStr(player):
+def incStat(player, stat, incAmt, statName):
     clearScreen()
-    oldStr = player.strength
-    player.strength += INC_STR_AMT
-    player.experience -= player.levelUp()
-    player.hp = player.maxHp
-    player.level += 1
-    print(f'\nYour strength went from {oldStr} to ' +
-          f'{player.strength}.')
-    print(f'You are now level {player.level}!\n')
-
-
-def incHp(player):
-    clearScreen()
-    oldHp = player.maxHp
-    player.maxHp += INC_HP_AMT
+    oldStat = stat
+    stat += incAmt
     player.hp = player.maxHp
     player.experience -= player.levelUp()
     player.level += 1
-    print(f'\nYour maximum HP went from {oldHp} to ' +
-          f'{player.maxHp}.')
+    print(f'\nYour {statName} went from {oldStat} to ' +
+          f'{stat}.')
     print(f'You are now level {player.level}!\n')
+    return stat
 
 
 def whatToDo():
@@ -144,14 +137,15 @@ def printTitle(titleString):
 
 def getPlayer():
     while True:
-        choice = input('Would you like to create a character or load?\n')
+        choice = input('Would you like to (C)REATE a character or ' +
+                       '(L)OAD?\n')
         choice = choice.lower()
-        if choice == 'create':
+        if choice == 'create' or choice == 'c':
             name = input('\nWhat is your name?\n')
             player = PLAYER.Player(ITEMS.shortSword, 'human', 'knight',
                                    name, LOCATIONS.plaza)
             break
-        elif choice == 'load':
+        elif choice == 'load' or choice == 'l':
             player = loadPlayer()
             break
         else:
@@ -164,80 +158,96 @@ def battle(player):
     enemy = getEnemy()
     print(f'{player.name} vs {enemy.name}!')
     battleRound = 1
+    battleLoop(player, enemy, battleRound)
 
-    # WHILE - battle loop
-    while player.alive and enemy.alive:
-        print(f'\nRound {battleRound}')
-        print(f'\nRemaining player health: {player.hp}/{player.maxHp}')
-        print(f'Remaining enemy health: {enemy.hp}/{enemy.maxHp}')
-        print('\nYou can (A)ttack, (H)eal, or (S)urrender.\n')
-        iString = whatToDo()
+
+def battleLoop(player, enemy, battleRound):
+    iString = batLoopPrompt(player, enemy, battleRound)
+    if iString == 'attack' or iString == 'a':
+        player.attack(enemy)
+    elif iString == 'heal' or iString == 'h':
+        healPotion(player, enemy, battleRound)
+    elif iString == 'surrender' or iString == 's':
+        surrender(player, enemy, battleRound)
+    else:                       # INVALID INPUT
+        battleLoop(player, enemy, battleRound)
+    if enemy.hp > 0:            # If enemy alive, enemy attacks
+        enemy.attack(player)
+        if player.hp <= 0:      # Player defeated
+            defeatPlayer(player, enemy)
+    else:                       # Enemy defeated
+        defeatEnemy(player, enemy)
+    battleRound += 1
+    battleLoop(player, enemy, battleRound)
+
+
+def defeatPlayer(player, enemy):
+    print(f'You have been slain by the {enemy.name}.')
+    player.alive = False
+    input('\nGAME OVER.\n')
+    sys.exit()
+
+
+def defeatEnemy(player, enemy):
+    print(f'You have slain the {enemy.name}.')
+    enemy.alive = False
+    player.experience += enemy.grantExp
+    gainGold = enemy.dropGold()
+    player.gold += gainGold
+    print(f'\nYou gain {enemy.grantExp} experience.')
+    print(f'You found {gainGold} pieces of gold.\n')
+    pressEnter()
+    player.query()
+
+
+def healPotion(player, enemy, battleRound):
+    # If player has no potions, continue to beginning of loop
+    if player.numOfPot < 1:
+        print("You don't have any potions left")
+        battleLoop(player, enemy, battleRound)
+    else:   # ELSE use potion
+        ITEMS.potion.use(player)
+        print(f'You have {player.numOfPot} potions left')
+
+
+def surrender(player, enemy, battleRound):
+    LOSE_EXP_SURRENDER = player.experience // 3
+    print(f'If you surrender, you will lose ' +
+          f'{LOSE_EXP_SURRENDER} experience.\n')
+    surrenderLoop(player, enemy, battleRound,
+                  LOSE_EXP_SURRENDER)
+
+
+def batLoopPrompt(player, enemy, battleRound):
+    print(f'\nRound {battleRound}')
+    print(f'\nRemaining player health: {player.hp}/{player.maxHp}')
+    print(f'Remaining enemy health: {enemy.hp}/{enemy.maxHp}')
+    print('\nYou can (A)ttack, (H)eal, or (S)urrender.\n')
+    iString = whatToDo()
+    clearScreen()
+    return iString
+
+
+def surrenderLoop(player, enemy, battleRound,
+                  LOSE_EXP_SURRENDER):
+    choice = input('Are you sure that you want to surrender?\n')
+    choice = choice.lower()
+    if choice == 'yes' or choice == 'y':
         clearScreen()
-
-        # ATTACK
-        if iString == 'attack' or iString == 'a':
-            player.attack(enemy)
-
-        # HEAL
-        elif iString == 'heal' or iString == 'h':
-            # If player has no potions, continue to beginning of loop
-            if player.numOfPot < 1:
-                print("You don't have any potions left")
-                continue
-            else:   # ELSE use potion
-                ITEMS.potion.use(player)
-                print(f'You have {player.numOfPot} potions left')
-
-        # SURRENDER
-        elif iString == 'surrender' or iString == 's':
-            LOSE_EXP_SURRENDER = player.experience // 3
-            print(f'If you surrender, you will lose ' +
-                  f'{LOSE_EXP_SURRENDER} experience.\n')
-            while True:
-                choice = input('Are you sure that you want to surrender?\n')
-                choice = choice.lower()
-                if choice == 'yes' or choice == 'y':
-                    clearScreen()
-                    oldExp = player.experience
-                    player.experience -= LOSE_EXP_SURRENDER
-                    print(f'\nYour experience points went from ' +
-                          f'{oldExp} to {player.experience}.\n')
-                    pressEnter()
-                    player.query()
-                elif choice == 'no' or choice == 'n':
-                    clearScreen()
-                    break
-                else:
-                    clearScreen()
-                    pleaseEnter(['yes', 'no'])
-                    continue
-            continue
-        else:
-            continue
-
-        # IF enemy alive, enemy attacks player
-        if enemy.hp > 0:
-            enemy.attack(player)
-
-            # Game ends if player reaches 0 HP
-            if player.hp <= 0:
-                print(f'You have been slain by the {enemy.name}.')
-                player.alive = False
-                input('\nGAME OVER.\n')
-                sys.exit()
-
-        # ENEMY DEFEATED
-        else:
-            print(f'You have slain the {enemy.name}.')
-            enemy.alive = False
-            player.experience += enemy.grantExp
-            gainGold = enemy.dropGold()
-            player.gold += gainGold
-            print(f'\nYou gain {enemy.grantExp} experience.')
-            print(f'You found {gainGold} pieces of gold.\n')
-        battleRound += 1    # increment round number
-    # END WHILE
-# End function
+        oldExp = player.experience
+        player.experience -= LOSE_EXP_SURRENDER
+        print(f'\nYour experience points went from ' +
+              f'{oldExp} to {player.experience}.\n')
+        pressEnter()
+        player.query()
+    elif choice == 'no' or choice == 'n':
+        clearScreen()
+        battleLoop(player, enemy, battleRound)
+    else:
+        clearScreen()
+        pleaseEnter(['yes', 'no'])
+        surrenderLoop(player, enemy, battleRound,
+                      LOSE_EXP_SURRENDER)
 
 
 def buy(player):
