@@ -48,19 +48,22 @@ class Player(Creature):     # Player class used for user character
 
     def query(self):
         self.location.welcome(self)
-        while True:
-            iString = input('Enter command: ')
-            istring = iString.lower()
-            if iString == 'quit' or iString == 'q':
-                self.confirmQuit()
-            elif iString == 'help' or iString == 'h':
-                self.helpMove()
-            elif iString == 'location' or iString == 'l':
-                self.location.welcome(self)
-            elif iString == 'check' or iString == 'c':
-                self.check()
-            else:
-                self.location.Move(self, iString)
+        self.queryLoop()
+
+    def queryLoop(self):
+        iString = input('Enter command: ')
+        istring = iString.lower()
+        if iString == 'quit' or iString == 'q':
+            self.confirmQuit()
+        elif iString == 'help' or iString == 'h':
+            self.helpMove()
+        elif iString == 'location' or iString == 'l':
+            self.location.welcome(self)
+        elif iString == 'check' or iString == 'c':
+            self.check()
+        else:
+            self.location.Move(self, iString)
+        self.queryLoop()
 
     def confirmQuit(self):
         FUNCTIONS.clearScreen()
@@ -82,6 +85,7 @@ UTILITY COMMANDS:
         self.location.helpMove()
         self.location.help()
 
+
     def check(self):
         print('\n'*40)
         print(f'''
@@ -97,7 +101,6 @@ potions: {self.numOfPot}
 weapon:  {self.weapon.name}
 wpn dam: {self.weapon.damage}
 ''')
-
 
 class Enemy(Creature):  # Create complex enemies. (Not in use)
     def __init__(self, weapon, race, job):

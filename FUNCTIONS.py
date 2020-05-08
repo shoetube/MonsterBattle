@@ -126,10 +126,6 @@ def clearScreen():
     print('\n'*SCREEN_CLEAR)
 
 
-def pressEnter():
-    input('Press ENTER to continue.\n')
-
-
 def printTitle(titleString):
     clearScreen()
     print(titleString)
@@ -196,8 +192,7 @@ def defeatEnemy(player, enemy):
     player.gold += gainGold
     print(f'\nYou gain {enemy.grantExp} experience.')
     print(f'You found {gainGold} pieces of gold.\n')
-    pressEnter()
-    player.query()
+    player.queryLoop()
 
 
 def healPotion(player, enemy, battleRound):
@@ -238,8 +233,7 @@ def surrenderLoop(player, enemy, battleRound,
         player.experience -= LOSE_EXP_SURRENDER
         print(f'\nYour experience points went from ' +
               f'{oldExp} to {player.experience}.\n')
-        pressEnter()
-        player.query()
+        player.queryLoop()
     elif choice == 'no' or choice == 'n':
         clearScreen()
         battleLoop(player, enemy, battleRound)
@@ -260,8 +254,7 @@ def buy(player):
 
     if player.numOfPot >= MAX_POT:
         print("You can't carry any more potions!\n")
-        pressEnter()
-        player.query()
+        player.queryLoop()
     buyInput = input('How many potions would you like?\n')
 
     # How many potions does the player want?

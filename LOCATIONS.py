@@ -130,7 +130,8 @@ class Library(Location):
             FUNCTIONS.clearScreen()
             player = FUNCTIONS.loadPlayer()
             print('\nLoad successful!\n')
-            print('Welcome, ' + player.name)
+            print(f'Welcome, {player.name}\n')
+            player.queryLoop()  # Opens query with newly loaded player
         elif iString == 'study':
             FUNCTIONS.clearScreen()
             print(f'You currently have {player.experience} ' +
@@ -141,8 +142,6 @@ class Library(Location):
                 FUNCTIONS.levelUp(player)
             else:
                 print("You don't have enough experience yet.\n")
-#                FUNCTIONS.pressEnter()
-#                player.query()
         else:
             self.invalid()
 
